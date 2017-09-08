@@ -144,7 +144,8 @@ def delete_message_on_channel(channel_id, message):
             pp.pprint(message)
             return
 
-        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
+        if not args.quiet
+            logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
                        + get_user_name(message)
                        + ' : %s'
                        , message.get('text', ''))
@@ -154,7 +155,8 @@ def delete_message_on_channel(channel_id, message):
 
     # Just simulate the task
     else:
-        logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
+        if not args.quiet
+            logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
                        + get_user_name(message)
                        + ' :  %s'
                        , message.get('text', ''))
@@ -206,7 +208,8 @@ def delete_file(file):
             pp.pprint(file)
             return
 
-        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
+        if not args.quiet
+            logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
                        + file.get('title', ''))
 
         if args.rate_limit:
@@ -214,7 +217,8 @@ def delete_file(file):
 
     # Just simulate the task
     else:
-        logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
+        if not args.quiet
+            logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
                        + file.get('title', ''))
 
     counter.increase()

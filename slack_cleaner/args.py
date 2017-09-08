@@ -14,6 +14,9 @@ class Args():
         # Log
         p.add_argument('--log', action='store_true',
                        help='Create a log file in the current directory')
+        # Quiet
+        p.add_argument('--quiet', action='store_true',
+                       help='Run quietly, does not log messages deleted')
 
         # Rate limit
         p.add_argument('--rate', type=int,
@@ -68,6 +71,8 @@ class Args():
         self.token = args.token
 
         self.log = args.log
+
+        self.quiet = args.quiet
 
         self.rate_limit = args.rate
 
