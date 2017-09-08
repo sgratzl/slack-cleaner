@@ -164,7 +164,7 @@ def delete_message_on_channel(channel_id, message):
     counter.increase()
 
 
-def remove_files(time_range, user_id=None, types=None):
+def remove_files(time_range, user_id=None, types=None, channel_id=None):
     # Setup time range for query
     oldest = time_range.start_ts
     latest = time_range.end_ts
@@ -176,6 +176,7 @@ def remove_files(time_range, user_id=None, types=None):
     has_more = True
     while has_more:
         res = slack.files.list(user=user_id, ts_from=oldest, ts_to=latest,
+                               channel=channel_id,
                                types=types, page=page).body
 
         if not res['ok']:
@@ -318,6 +319,15 @@ def message_cleaner():
 def file_cleaner():
     _user_id = None
     _types = None
+    _channel_id = None
+
+    # If channel's name is supplied
+    if args.channel_name:
+        _channel_id = get_channel_id_by_name(args.channel_name)
+
+    # If group's name is supplied
+    if args.group_name:
+        _channel_id = get_group_id_by_name(args.group_name)
 
     if args.user_name:
         # A little bit tricky here, we use -1 to indicates `--user=*`
@@ -332,8 +342,11 @@ def file_cleaner():
     if args.types:
         _types = args.types
 
-    remove_files(time_range, _user_id, _types)
+    if (args.channel_name or args.group_name) and _channel_id is None:
+        sys.exit('Channel, direct message or private group not found')
 
+    remove_files(time_range, user_id=_user_id, types=_types,
+                 channel_id=_channel_id)
 
 def main():
     # Dispatch
