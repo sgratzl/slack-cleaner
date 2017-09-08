@@ -41,6 +41,8 @@ class Args():
         # Conditions
         p.add_argument('--user',
                        help='Delete messages/files from certain user')
+        p.add_argument('--botname',
+                       help='Delete messages/files from certain bots')
         p.add_argument('--bot', action='store_true',
                        help='Delete messages from bots')
         p.add_argument('--after',
@@ -78,6 +80,7 @@ class Args():
         self.mpdirect_name = args.mpdirect
 
         self.user_name = args.user
+        self.botname = args.botname
         self.bot = args.bot
         self.start_time = args.after
         self.end_time = args.before
