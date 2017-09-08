@@ -30,7 +30,7 @@ slack-cleaner --token <TOKEN> --message --direct sherry --user johndoe
 
 # Delete all messages from a multiparty direct message channel. Note that the
 # list of usernames must contains yourself
-slack-cleaner --token <TOKEN> --message --mpdirect sherry,james,johndoe --user "*" 
+slack-cleaner --token <TOKEN> --message --mpdirect sherry,james,johndoe --user "*"
 
 # Delete all messages from certain user
 slack-cleaner --token <TOKEN> --message --channel gossip --user johndoe
@@ -53,6 +53,12 @@ slack-cleaner --token <TOKEN> --file --types snippets,images
 # Always have a look at help message
 slack-cleaner --help
 ```
+
+## Tokens
+
+You will need to generate a Slack legacy token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
+
+[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens)
 
 ## Tips
 
