@@ -48,6 +48,8 @@ class Args():
                        help='Delete messages/files from certain bots')
         p.add_argument('--bot', action='store_true',
                        help='Delete messages from bots')
+        p.add_argument('--keeppinned', action='store_true',
+                       help='exclude pinned messages from deletion')
         p.add_argument('--after',
                        help='Delete messages/files newer than this time ' +
                             '(YYYYMMDD)')
@@ -87,6 +89,7 @@ class Args():
         self.user_name = args.user
         self.botname = args.botname
         self.bot = args.bot
+        self.keep_pinned = args.keeppinned
         self.start_time = args.after
         self.end_time = args.before
         self.types = args.types
