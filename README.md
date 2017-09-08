@@ -78,6 +78,9 @@ InsecurePlatformWarning: A true SSLContext object is not available.
           For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
 ```
 
+Create tokens here: https://api.slack.com/custom-integrations/legacy-tokens
+Manage existing tokens at the above URL and/or here: https://api.slack.com/tokens
+
 ## Credits
 
 **To all the people who can only afford a free plan. :cry:**
