@@ -19,7 +19,7 @@ class Args():
                        help='Run quietly, does not log messages deleted')
 
         # Rate limit
-        p.add_argument('--rate', type=int,
+        p.add_argument('--rate', type=float,
                        help='Delay between API calls (in seconds)')
 
         # Type
