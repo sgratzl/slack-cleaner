@@ -50,6 +50,9 @@ slack-cleaner --token <TOKEN> --file --user johndoe
 # Delete all snippets and images
 slack-cleaner --token <TOKEN> --file --types snippets,images
 
+# Purge messages from all channels for a user
+slack-cleaner --token <TOKEN> --message --purge yes --user johndoe
+
 # Always have a look at help message
 slack-cleaner --help
 ```

@@ -46,6 +46,8 @@ logger.info('Running slack-cleaner v' + __version__)
 # User dict
 user_dict = {}
 
+# Channel dict
+channel_dict = {}
 
 # Construct a local user dict for further usage
 def init_user_dict():
@@ -60,12 +62,29 @@ def init_user_dict():
 # Init user dict
 init_user_dict()
 
+# Construct a local channel dict for further usage
+def init_channel_dict():
+    res = slack.channels.list().body
+    if not res['ok']:
+        return
+    channels = res['channels']
+
+    for c in channels:
+        channel_dict[c['id']] = c['name']
+
+# Init channel dict
+init_channel_dict()
 
 def get_id_by_name(list_dict, key_name):
     for d in list_dict:
         if d['name'] == key_name:
             return d['id']
 
+def purge_channels(time_range, user_id=None, bot=False):
+
+    for c in channel_dict:
+        print "Cleaning Channel: ",channel_dict[c]
+        clean_channel(c, time_range, user_id, args.bot)
 
 def clean_channel(channel_id, time_range, user_id=None, bot=False, keep_pinned=False):
     # Setup time range for query
@@ -74,7 +93,9 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, keep_pinned=F
 
     _api_end_point = None
     # Set to the right API end point
-    if args.channel_name:
+    if args.purge_name:
+        _api_end_point = slack.channels.history
+    elif args.channel_name:
         _api_end_point = slack.channels.history
     elif args.direct_name:
         _api_end_point = slack.im.history
