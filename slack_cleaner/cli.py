@@ -5,6 +5,7 @@ import logging
 import pprint
 import sys
 import time
+import re
 
 from slacker import Slacker
 
@@ -86,7 +87,7 @@ def purge_channels(time_range, user_id=None, bot=False):
         print "Cleaning Channel: ",channel_dict[c]
         clean_channel(c, time_range, user_id, args.bot)
 
-def clean_channel(channel_id, time_range, user_id=None, bot=False, keep_pinned=False):
+def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None, keep_pinned=False):
     # Setup time range for query
     oldest = time_range.start_ts
     latest = time_range.end_ts
@@ -128,6 +129,11 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, keep_pinned=F
                 # exclude pinned message if asked
                 if keep_pinned and m.get('pinned_to'):
                     continue
+                if pattern :
+                    regex = re.compile( pattern )
+                    match = regex.search( m['text'] )
+                    if match == None:
+                        continue
                 # If it's a normal user message
                 if m.get('user'):
                     # Delete message if user_name matched or `--user=*`
@@ -188,7 +194,7 @@ def delete_message_on_channel(channel_id, message):
     counter.increase()
 
 
-def remove_files(time_range, user_id=None, types=None, channel_id=None):
+def remove_files(time_range, user_id=None, types=None, channel_id=None, pattern=None, keep_pinned=False):
     # Setup time range for query
     oldest = time_range.start_ts
     latest = time_range.end_ts
@@ -215,6 +221,13 @@ def remove_files(time_range, user_id=None, types=None, channel_id=None):
         page = current_page + 1
 
         for f in files:
+            if keep_pinned and m.get('pinned_to'):
+                continue
+            if pattern :
+                regex = re.compile( pattern )
+                match = regex.search( f['name'] )
+                if match == None:
+                    continue
             # Delete user file
             delete_file(f)
 
@@ -337,7 +350,7 @@ def message_cleaner():
             sys.exit('User not found')
 
     # Delete messages on certain channel
-    clean_channel(_channel_id, time_range, _user_id, args.bot, args.keep_pinned)
+    clean_channel(_channel_id, time_range, _user_id, args.bot, args.pattern, args.keep_pinned)
 
 
 def file_cleaner():
@@ -370,7 +383,7 @@ def file_cleaner():
         sys.exit('Channel, direct message or private group not found')
 
     remove_files(time_range, user_id=_user_id, types=_types,
-                 channel_id=_channel_id)
+                 channel_id=_channel_id, args.pattern, args.keep_pinned)
 
 def main():
     # Dispatch

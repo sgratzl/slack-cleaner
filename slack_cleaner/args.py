@@ -23,7 +23,7 @@ class Args():
                        help='Delay between API calls (in seconds)')
 
         # Type
-        g_type = p.add_mutually_exclusive_group(required=True)
+        g_type = p.add_mutually_exclusive_group()
         g_type.add_argument('--message', action='store_true',
                             help='Delete messages')
         g_type.add_argument('--file', action='store_true',
@@ -60,6 +60,8 @@ class Args():
                             '(YYYYMMDD)')
         p.add_argument('--types',
                        help='Delete files of a certain type, e.g., posts,pdfs')
+        p.add_argument('--pattern',
+                       help='Delete messages with specified pattern (regex)')
 
         # Perform or not
         p.add_argument('--perform', action='store_true',
@@ -96,5 +98,6 @@ class Args():
         self.start_time = args.after
         self.end_time = args.before
         self.types = args.types
+        self.pattern = args.pattern
 
         self.perform = args.perform
