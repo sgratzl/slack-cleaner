@@ -1,11 +1,11 @@
-FROM python:2.7
+FROM alpine:3.5
 
 MAINTAINER kfei <kfei@kfei.net>
 
-RUN pip install slack-cleaner
+RUN apk add --no-cache python2 py-pip && pip install slack-cleaner
 
 VOLUME ["/backup"]
 
 WORKDIR /backup
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/bin/sh"]
