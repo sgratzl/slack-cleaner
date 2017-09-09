@@ -22,6 +22,10 @@ class Args():
     p.add_argument('--rate', type=float,
                    help='Delay between API calls (in seconds)')
 
+    # user
+    p.add_argument('--as_user', action='store_true',
+                   help='Pass true to delete the message as the authed user. Bot users in this context are considered authed users.')
+
     # Type
     g_type = p.add_mutually_exclusive_group()
     g_type.add_argument('--message', action='store_true',
@@ -51,6 +55,8 @@ class Args():
                    help='Delete messages/files from certain bots')
     p.add_argument('--bot', action='store_true',
                    help='Delete messages from bots')
+
+    # Filter
     p.add_argument('--keeppinned', action='store_true',
                    help='exclude pinned messages from deletion')
     p.add_argument('--after',
@@ -78,10 +84,9 @@ class Args():
     self.token = args.token
 
     self.log = args.log
-
     self.quiet = args.quiet
-
     self.rate_limit = args.rate
+    self.as_user = args.as_user
 
     self.delete_message = args.message
     self.delete_file = args.file

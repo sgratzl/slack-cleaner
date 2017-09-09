@@ -23,7 +23,7 @@ Just prepend `docker run -it --rm sgratzl/slack-cleaner` for each command or jum
 ## Arguments
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
-                     [--message | --file]
+                     [--as_user] [--message | --file]
                      [--purge PURGE | --channel CHANNEL | --direct DIRECT | --group GROUP | --mpdirect MPDIRECT]
                      [--user USER] [--botname BOTNAME] [--bot] [--keeppinned]
                      [--after AFTER] [--before BEFORE] [--types TYPES]
@@ -35,6 +35,8 @@ optional arguments:
   --log                Create a log file in the current directory
   --quiet              Run quietly, does not log messages deleted
   --rate RATE          Delay between API calls (in seconds)
+  --as_user            Pass true to delete the message as the authed user. Bot
+                       users in this context are considered authed users.
   --message            Delete messages
   --file               Delete files
   --purge PURGE        Purge messages from all channels

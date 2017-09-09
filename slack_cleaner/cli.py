@@ -182,8 +182,7 @@ def delete_message_on_channel(channel_id, message):
   if args.perform:
     try:
       # No response is a good response
-      # FIXME: Why this behaviour differ from Slack's documentation?
-      slack.chat.delete(channel_id, message['ts'])
+      slack.chat.delete(channel_id, message['ts'], as_user=args.as_user)
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
@@ -250,7 +249,7 @@ def delete_file(file):
   if args.perform:
     try:
       # No response is a good response
-      slack.files.delete(file['id'])
+      slack.files.delete(file['id'], as_user=args.as_user)
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s) ->' + Colors.ENDC, error)
       pp.pprint(file)
