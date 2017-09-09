@@ -314,19 +314,19 @@ def resolve_channels():
   _channels = []
   # If channel's name is supplied
   if args.channel_name:
-    _channels.extend([(id, name, 'channel'), for (id, name) in get_channel_ids_by_pattern(args.channel_name, not args.regex)])
+    _channels.extend([(id, name, 'channel') for (id, name) in get_channel_ids_by_pattern(args.channel_name, not args.regex)])
 
   # If DM's name is supplied
   if args.direct_name:
-    _channels.extend([(id, name, 'direct'), for (id, name) in get_direct_ids_by_pattern(args.direct_name, not args.regex)])
+    _channels.extend([(id, name, 'direct') for (id, name) in get_direct_ids_by_pattern(args.direct_name, not args.regex)])
 
   # If channel's name is supplied
   if args.group_name:
-    _channels.extend([(id, name, 'group'), for (id, name) in get_group_ids_by_pattern(args.group_name, not args.regex)])
+    _channels.extend([(id, name, 'group') for (id, name) in get_group_ids_by_pattern(args.group_name, not args.regex)])
 
   # If group DM's name is supplied
   if args.mpdirect_name:
-    _channels.extend([(id, name, 'mpdirect'), for (id, name) in get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name)])
+    _channels.extend([(id, name, 'mpdirect') for (id, name) in get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name)])
 
   return _channels
 
