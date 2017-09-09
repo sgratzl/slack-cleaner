@@ -320,10 +320,8 @@ def get_group_id_by_name(name):
     return get_id_by_name(groups, name)
 
 
-def message_cleaner():
+def resolve_channel():
   _channel_id = None
-  _user_id = None
-
   # If channel's name is supplied
   if args.channel_name:
     _channel_id = get_channel_id_by_name(args.channel_name)
@@ -343,6 +341,11 @@ def message_cleaner():
   if _channel_id is None:
     sys.exit('Channel, direct message or private group not found')
 
+  return _channel_id
+
+
+def resolve_uesr():
+  _user_id = None
   # If user's name is also supplied
   if args.user_name:
     # A little bit tricky here, we use -1 to indicates `--user=*`
@@ -353,42 +356,25 @@ def message_cleaner():
 
     if _user_id is None:
       sys.exit('User not found')
+  return _user_id
+
+
+def message_cleaner():
+  _channel_id = resolve_channel()
+  _user_id = resolve_user()
 
   # Delete messages on certain channel
-  clean_channel(_channel_id, time_range, _user_id, args.bot, args.pattern, args.keep_pinned)
+  clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot, pattern=args.pattern,
+                keep_pinned=args.keep_pinned)
 
 
 def file_cleaner():
-  _user_id = None
-  _types = None
-  _channel_id = None
-
-  # If channel's name is supplied
-  if args.channel_name:
-    _channel_id = get_channel_id_by_name(args.channel_name)
-
-  # If group's name is supplied
-  if args.group_name:
-    _channel_id = get_group_id_by_name(args.group_name)
-
-  if args.user_name:
-    # A little bit tricky here, we use -1 to indicates `--user=*`
-    if args.user_name == "*":
-      _user_id = -1
-    else:
-      _user_id = get_user_id_by_name(args.user_name)
-
-    if _user_id is None:
-      sys.exit('User not found')
-
-  if args.types:
-    _types = args.types
-
-  if (args.channel_name or args.group_name) and _channel_id is None:
-    sys.exit('Channel, direct message or private group not found')
+  _types = args.types if args.types else None
+  _channel_id = resolve_channel()
+  _user_id = resolve_uesr()
 
   remove_files(time_range, user_id=_user_id, types=_types,
-               channel_id=_channel_id, args.pattern, args.keep_pinned)
+               channel_id=_channel_id, pattern=args.pattern, keep_pinned=args.keep_pinned)
 
 
 def main():
