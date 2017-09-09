@@ -183,16 +183,15 @@ def delete_message_on_channel(channel_id, message):
     try:
       # No response is a good response
       slack.chat.delete(channel_id, message['ts'], as_user=args.as_user)
+
+      if not args.quiet:
+        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
+                       + get_user_name(message)
+                       + ' : %s'
+                       , message.get('text', ''))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
-      return
-
-    if not args.quiet:
-      logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
-                     + get_user_name(message)
-                     + ' : %s'
-                     , message.get('text', ''))
 
     if args.rate_limit:
       time.sleep(args.rate_limit)
@@ -250,14 +249,12 @@ def delete_file(file):
     try:
       # No response is a good response
       slack.files.delete(file['id'], as_user=args.as_user)
+      if not args.quiet:
+        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
+                      + file.get('title', ''))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s) ->' + Colors.ENDC, error)
       pp.pprint(file)
-      return
-
-    if not args.quiet:
-      logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
-                     + file.get('title', ''))
 
     if args.rate_limit:
       time.sleep(args.rate_limit)
