@@ -96,9 +96,9 @@ class Args():
   self.botname = args.botname
   self.bot = args.bot
   self.keep_pinned = args.keeppinned
+  self.pattern = args.pattern
   self.start_time = args.after
   self.end_time = args.before
   self.types = args.types
-  self.pattern = args.pattern
 
   self.perform = args.perform
