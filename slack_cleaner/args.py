@@ -34,71 +34,71 @@ class Args():
     g_chan.add_argument('--purge',
                         help='Purge messages from all channels')
 
-  g_chan.add_argument('--channel',
-                      help='Channel name\'s, e.g., general')
-  g_chan.add_argument('--direct',
-                      help='Direct message\'s name, e.g., sherry')
-  g_chan.add_argument('--group',
-                      help='Private group\'s name')
-  g_chan.add_argument('--mpdirect',
-                      help='Multiparty direct message\'s name, e.g., ' +
-                           'sherry,james,johndoe')
+    g_chan.add_argument('--channel',
+                        help='Channel name\'s, e.g., general')
+    g_chan.add_argument('--direct',
+                        help='Direct message\'s name, e.g., sherry')
+    g_chan.add_argument('--group',
+                        help='Private group\'s name')
+    g_chan.add_argument('--mpdirect',
+                        help='Multiparty direct message\'s name, e.g., ' +
+                             'sherry,james,johndoe')
 
-  # Conditions
-  p.add_argument('--user',
-                 help='Delete messages/files from certain user')
-  p.add_argument('--botname',
-                 help='Delete messages/files from certain bots')
-  p.add_argument('--bot', action='store_true',
-                 help='Delete messages from bots')
-  p.add_argument('--keeppinned', action='store_true',
-                 help='exclude pinned messages from deletion')
-  p.add_argument('--after',
-                 help='Delete messages/files newer than this time ' +
-                      '(YYYYMMDD)')
-  p.add_argument('--before',
-                 help='Delete messages/files older than this time ' +
-                      '(YYYYMMDD)')
-  p.add_argument('--types',
-                 help='Delete files of a certain type, e.g., posts,pdfs')
-  p.add_argument('--pattern',
-                 help='Delete messages with specified pattern (regex)')
+    # Conditions
+    p.add_argument('--user',
+                   help='Delete messages/files from certain user')
+    p.add_argument('--botname',
+                   help='Delete messages/files from certain bots')
+    p.add_argument('--bot', action='store_true',
+                   help='Delete messages from bots')
+    p.add_argument('--keeppinned', action='store_true',
+                   help='exclude pinned messages from deletion')
+    p.add_argument('--after',
+                   help='Delete messages/files newer than this time ' +
+                        '(YYYYMMDD)')
+    p.add_argument('--before',
+                   help='Delete messages/files older than this time ' +
+                        '(YYYYMMDD)')
+    p.add_argument('--types',
+                   help='Delete files of a certain type, e.g., posts,pdfs')
+    p.add_argument('--pattern',
+                   help='Delete messages with specified pattern (regex)')
 
-  # Perform or not
-  p.add_argument('--perform', action='store_true',
-                 help='Perform the task')
+    # Perform or not
+    p.add_argument('--perform', action='store_true',
+                   help='Perform the task')
 
-  args = p.parse_args()
+    args = p.parse_args()
 
-  if args.message:
-    if (args.channel is None and args.direct is None and
-            args.group is None and args.mpdirect is None):
-      p.error('A channel is required when using --message')
+    if args.message:
+      if (args.channel is None and args.direct is None and
+              args.group is None and args.mpdirect is None):
+        p.error('A channel is required when using --message')
 
-  self.token = args.token
+    self.token = args.token
 
-  self.log = args.log
+    self.log = args.log
 
-  self.quiet = args.quiet
+    self.quiet = args.quiet
 
-  self.rate_limit = args.rate
+    self.rate_limit = args.rate
 
-  self.delete_message = args.message
-  self.delete_file = args.file
+    self.delete_message = args.message
+    self.delete_file = args.file
 
-  self.purge_name = args.purge
-  self.channel_name = args.channel
-  self.direct_name = args.direct
-  self.group_name = args.group
-  self.mpdirect_name = args.mpdirect
+    self.purge_name = args.purge
+    self.channel_name = args.channel
+    self.direct_name = args.direct
+    self.group_name = args.group
+    self.mpdirect_name = args.mpdirect
 
-  self.user_name = args.user
-  self.botname = args.botname
-  self.bot = args.bot
-  self.keep_pinned = args.keeppinned
-  self.pattern = args.pattern
-  self.start_time = args.after
-  self.end_time = args.before
-  self.types = args.types
+    self.user_name = args.user
+    self.botname = args.botname
+    self.bot = args.bot
+    self.keep_pinned = args.keeppinned
+    self.pattern = args.pattern
+    self.start_time = args.after
+    self.end_time = args.before
+    self.types = args.types
 
-  self.perform = args.perform
+    self.perform = args.perform
