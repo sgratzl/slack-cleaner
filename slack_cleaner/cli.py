@@ -266,7 +266,7 @@ def get_direct_ids_by_pattern(pattern, equality_match):
   if not res['ok'] or not res['ims']:
     return []
   ims = res['ims']
-  return match_by_key(pattern, res['ims'], lambda c: user_dict[i['user']], equality_match)
+  return match_by_key(pattern, res['ims'], lambda i: user_dict[i['user']], equality_match)
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
