@@ -326,7 +326,7 @@ def resolve_channels():
 
   # If group DM's name is supplied
   if args.mpdirect_name:
-    _channels.extend([(id, name, 'mpdirect') for (id, name) in get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name)])
+    _channels.extend([(id, name, 'mpdirect') for (id, name) in (get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))])
 
   return _channels
 
