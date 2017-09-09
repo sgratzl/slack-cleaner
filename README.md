@@ -18,6 +18,8 @@ If you prefer Docker, there is a pre-built Docker image as well:
 docker pull sgratzl/slack-cleaner
 ```
 
+Just prepend `docker run -it --rm sgratzl/slack-cleaner` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`. 
+
 ## Usage
 
 ```bash
