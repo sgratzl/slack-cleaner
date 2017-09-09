@@ -92,7 +92,20 @@ def purge_channels(time_range, user_id=None, bot=False):
     clean_channel(c, time_range, user_id, args.bot)
 
 
-def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None, keep_pinned=False):
+def skip_to_delete(m):
+  if args.keep_pinned and m.get('pinned_to'):
+    return True
+  if args.pattern:
+    regex = re.compile(args.pattern)
+    # name ... file
+    # text ... message
+    match = regex.search(m.get('text', m.get('name')))
+    if match == None:
+      return True
+  return False
+
+
+def clean_channel(channel_id, time_range, user_id=None, bot=False):
   # Setup time range for query
   oldest = time_range.start_ts
   latest = time_range.end_ts
@@ -121,7 +134,7 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None,
     messages = res['messages']
     has_more = res['has_more']
 
-    if len(messages) == 0:
+    if not messages:
       if not args.quiet:
         logger.info('No more messsages')
       break
@@ -133,13 +146,8 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None,
       # Delete user messages
       if m['type'] == 'message':
         # exclude pinned message if asked
-        if keep_pinned and m.get('pinned_to'):
+        if skip_to_delete(m):
           continue
-        if pattern:
-          regex = re.compile(pattern)
-          match = regex.search(m['text'])
-          if match == None:
-            continue
         # If it's a normal user message
         if m.get('user'):
           # Delete message if user_name matched or `--user=*`
@@ -200,7 +208,7 @@ def delete_message_on_channel(channel_id, message):
   counter.increase()
 
 
-def remove_files(time_range, user_id=None, types=None, channel_id=None, pattern=None, keep_pinned=False):
+def remove_files(time_range, user_id=None, types=None, channel_id=None):
   # Setup time range for query
   oldest = time_range.start_ts
   latest = time_range.end_ts
@@ -227,13 +235,8 @@ def remove_files(time_range, user_id=None, types=None, channel_id=None, pattern=
     page = current_page + 1
 
     for f in files:
-      if keep_pinned and m.get('pinned_to'):
+      if skip_to_delete(f):
         continue
-      if pattern:
-        regex = re.compile(pattern)
-        match = regex.search(f['name'])
-        if match == None:
-          continue
       # Delete user file
       delete_file(f)
 
@@ -344,7 +347,7 @@ def resolve_channel():
   return _channel_id
 
 
-def resolve_uesr():
+def resolve_user():
   _user_id = None
   # If user's name is also supplied
   if args.user_name:
@@ -364,17 +367,15 @@ def message_cleaner():
   _user_id = resolve_user()
 
   # Delete messages on certain channel
-  clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot, pattern=args.pattern,
-                keep_pinned=args.keep_pinned)
+  clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot)
 
 
 def file_cleaner():
   _types = args.types if args.types else None
   _channel_id = resolve_channel()
-  _user_id = resolve_uesr()
+  _user_id = resolve_user()
 
-  remove_files(time_range, user_id=_user_id, types=_types,
-               channel_id=_channel_id, pattern=args.pattern, keep_pinned=args.keep_pinned)
+  remove_files(time_range, user_id=_user_id, types=_types, channel_id=_channel_id)
 
 
 def main():
