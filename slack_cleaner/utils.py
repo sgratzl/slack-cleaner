@@ -19,9 +19,9 @@ class TimeRange():
     def parse_ts(t):
       try:
         if len(t) == 8:
-          _time = time.mktime(time.strptime(t, "%Y%m%d"))
+          return time.mktime(time.strptime(t, "%Y%m%d"))
         else:
-          _time = time.mktime(time.strptime(t, "%Y%m%d%H%M"))
+          return time.mktime(time.strptime(t, "%Y%m%d%H%M"))
       except:
         return '0'
 
