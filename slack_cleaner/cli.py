@@ -6,7 +6,7 @@ import pprint
 import sys
 import time
 import re
-
+from requests.sessions import Session
 from slacker import Slacker
 
 from slack_cleaner import __version__
@@ -18,7 +18,8 @@ args = Args()
 time_range = TimeRange(args.start_time, args.end_time)
 
 # Nice slack API wrapper
-slack = Slacker(args.token)
+with Session() as session:
+  slack = Slacker(args.token, session=session)
 
 # So we can print slack's object beautifully
 pp = pprint.PrettyPrinter(indent=4)
@@ -183,8 +184,8 @@ def delete_message_on_channel(channel_id, message):
       # No response is a good response
       # FIXME: Why this behaviour differ from Slack's documentation?
       slack.chat.delete(channel_id, message['ts'])
-    except:
-      logger.error(Colors.YELLOW + 'Failed to delete ->' + Colors.ENDC)
+    except error:
+      logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
       return
 
@@ -250,8 +251,8 @@ def delete_file(file):
     try:
       # No response is a good response
       slack.files.delete(file['id'])
-    except:
-      logger.error(Colors.YELLOW + 'Failed to delete ->' + Colors.ENDC)
+    except error:
+      logger.error(Colors.YELLOW + 'Failed to delete (%s) ->' + Colors.ENDC, error)
       pp.pprint(file)
       return
 
