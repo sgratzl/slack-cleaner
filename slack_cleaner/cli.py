@@ -6,6 +6,7 @@ import pprint
 import sys
 import time
 import re
+import itertools
 from requests.sessions import Session
 from slacker import Slacker
 
@@ -284,8 +285,11 @@ def get_mpdirect_ids_by_pattern(pattern):
   regex = re.compile('^' + pattern + '$', re.I)
   def matches(members):
     names = [user_dict[m] for m in mpim['members']]
-    # the regex has to match all members
-    return all(regex.match(name) for name in names)
+    # has to match at least one permutation of the members
+    for permutation in itertools.permutations(names):
+      if (regex.match(','.join(permutation))):
+        return True
+    return False
 
   return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
 
