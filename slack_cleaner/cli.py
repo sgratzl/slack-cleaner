@@ -184,6 +184,7 @@ def delete_message_on_channel(channel_id, message):
       # No response is a good response
       slack.chat.delete(channel_id, message['ts'], as_user=args.as_user)
 
+      counter.increase()
       if not args.quiet:
         logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
                        + get_user_name(message)
@@ -198,13 +199,12 @@ def delete_message_on_channel(channel_id, message):
 
   # Just simulate the task
   else:
+    counter.increase()
     if not args.quiet:
       logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
                      + get_user_name(message)
                      + ' :  %s'
                      , message.get('text', ''))
-
-  counter.increase()
 
 
 def remove_files(time_range, user_id=None, types=None, channel_id=None):
@@ -249,6 +249,7 @@ def delete_file(file):
     try:
       # No response is a good response
       slack.files.delete(file['id'], as_user=args.as_user)
+      counter.increase()
       if not args.quiet:
         logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
                       + file.get('title', ''))
@@ -261,10 +262,10 @@ def delete_file(file):
 
   # Just simulate the task
   elif not args.quiet:
+    counter.increase()
     logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
                    + file.get('title', ''))
 
-  counter.increase()
 
 
 def get_user_id_by_name(name):
@@ -273,75 +274,89 @@ def get_user_id_by_name(name):
       return k
 
 
-def get_channel_id_by_name(name):
+def match_by_key(pattern, items, key, equality_match):
+  if equality_match:
+    return [item['id'] for item in items if pattern == key(item)]
+  # ensure it matches the whole string
+  regex = re.compile('^' + pattern + '$', re.I)
+  return [item['id'] for item in items if regex.match(key(item))]
+
+
+def get_channel_ids_by_pattern(pattern, equality_match):
   res = slack.channels.list().body
-  if not res['ok']:
-    return
-  channels = res['channels']
-  if len(channels) > 0:
-    return get_id_by_name(channels, name)
+  if not res['ok'] or not res['channels']:
+    return []
+  return match_by_key(pattern, res['channels'], lambda c: c['name'], equality_match)
 
 
-def get_direct_id_by_name(name):
+def get_direct_ids_by_pattern(pattern, equality_match):
   res = slack.im.list().body
-  if not res['ok']:
-    return
+  if not res['ok'] or not res['ims']:
+    return []
   ims = res['ims']
-  if len(ims) > 0:
-    _user_id = get_user_id_by_name(name)
-    for i in ims:
-      if i['user'] == _user_id:
-        return i['id']
+  return match_by_key(pattern, res['ims'], lambda c: user_dict[i['user']], equality_match)
 
 
-def get_mpdirect_id_by_name(name):
+def get_group_ids_by_pattern(pattern, equality_match):
+  res = slack.groups.list().body
+  if not res['ok'] or not res['groups']:
+    return []
+  return match_by_key(pattern, res['groups'], lambda c: c['name'], equality_match)
+
+
+def get_mpdirect_ids_by_pattern(pattern):
   res = slack.mpim.list().body
+  if not res['ok'] or not res['groups']:
+    return []
+  mpims = res['groups']
+
+  regex = re.compile('^' + pattern + '$', re.I)
+  def matches(members):
+    names = [user_dict[m] for m in mpim['members']]
+    # the regex has to match all members
+    return all(regex.match(name) for name in names)
+
+  return [mpim['id'] for mpim in mpims if matches(mpim['members'])]
+
+
+def get_mpdirect_ids_compatbility(name):
+  res = slack.mpim.list().body
+  if not res['ok'] or not res['groups']:
+    return []
+  mpims = res['groups']
+
   # create set of user ids
   members = set([get_user_id_by_name(x) for x in name.split(',')])
 
-  if not res['ok']:
-    return
-
-  mpims = res['groups']
-
-  if len(mpims) > 0:
-    for mpim in mpims:
-      # match the mpdirect user ids
-      if set(mpim['members']) == members:
-        return mpim['id']
+  for mpim in mpims:
+    # match the mpdirect user ids
+    if set(mpim['members']) == members:
+      return [mpim['id']]
+  return []
 
 
-def get_group_id_by_name(name):
-  res = slack.groups.list().body
-  if not res['ok']:
-    return
-  groups = res['groups']
-  if len(groups) > 0:
-    return get_id_by_name(groups, name)
-
-
-def resolve_channel():
-  _channel_id = None
+def resolve_channels():
+  _channel_ids = []
   # If channel's name is supplied
   if args.channel_name:
-    _channel_id = get_channel_id_by_name(args.channel_name)
+    _channel_ids.extend(get_channel_ids_by_pattern(args.channel_name, not args.regex))
 
   # If DM's name is supplied
   if args.direct_name:
-    _channel_id = get_direct_id_by_name(args.direct_name)
+    _channel_ids.extend(get_direct_ids_by_pattern(args.direct_name, not args.regex))
 
   # If channel's name is supplied
   if args.group_name:
-    _channel_id = get_group_id_by_name(args.group_name)
+    _channel_ids.extend(get_group_ids_by_pattern(args.group_name, not args.regex))
 
   # If group DM's name is supplied
   if args.mpdirect_name:
-    _channel_id = get_mpdirect_id_by_name(args.mpdirect_name)
+    _channel_ids.extend(get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))
 
-  if _channel_id is None:
+  if not _channel_ids:
     sys.exit('Channel, direct message or private group not found')
 
-  return _channel_id
+  return _channel_ids
 
 
 def resolve_user():
@@ -360,19 +375,21 @@ def resolve_user():
 
 
 def message_cleaner():
-  _channel_id = resolve_channel()
+  _channel_ids = resolve_channels()
   _user_id = resolve_user()
 
-  # Delete messages on certain channel
-  clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot)
+  for _channel_id in _channel_ids:
+    # Delete messages on certain channel
+    clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot)
 
 
 def file_cleaner():
   _types = args.types if args.types else None
-  _channel_id = resolve_channel()
+  _channel_ids = resolve_channels()
   _user_id = resolve_user()
 
-  remove_files(time_range, user_id=_user_id, types=_types, channel_id=_channel_id)
+  for _channel_id in _channel_ids:
+    remove_files(time_range, user_id=_user_id, types=_types, channel_id=_channel_id)
 
 
 def main():

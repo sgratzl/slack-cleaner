@@ -33,18 +33,14 @@ class Args():
     g_type.add_argument('--file', action='store_true',
                         help='Delete files')
 
-    # Channel, DM or group
-    g_chan = p.add_mutually_exclusive_group()
-    g_chan.add_argument('--purge',
-                        help='Purge messages from all channels')
-
-    g_chan.add_argument('--channel',
+    p.add_argument('--regex', help='Interpret channel, direct, group, and mpdirect as regex')
+    p.add_argument('--channel',
                         help='Channel name\'s, e.g., general')
-    g_chan.add_argument('--direct',
+    p.add_argument('--direct',
                         help='Direct message\'s name, e.g., sherry')
-    g_chan.add_argument('--group',
+    p.add_argument('--group',
                         help='Private group\'s name')
-    g_chan.add_argument('--mpdirect',
+    p.add_argument('--mpdirect',
                         help='Multiparty direct message\'s name, e.g., ' +
                              'sherry,james,johndoe')
 
@@ -91,7 +87,7 @@ class Args():
     self.delete_message = args.message
     self.delete_file = args.file
 
-    self.purge_name = args.purge
+    self.regex = args.regex
     self.channel_name = args.channel
     self.direct_name = args.direct
     self.group_name = args.group
