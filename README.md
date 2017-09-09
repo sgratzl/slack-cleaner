@@ -18,7 +18,41 @@ If you prefer Docker, there is a pre-built Docker image as well:
 docker pull sgratzl/slack-cleaner
 ```
 
-Just prepend `docker run -it --rm sgratzl/slack-cleaner` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`. 
+Just prepend `docker run -it --rm sgratzl/slack-cleaner` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`.
+
+## Arguments
+```
+usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
+                     [--message | --file]
+                     [--purge PURGE | --channel CHANNEL | --direct DIRECT | --group GROUP | --mpdirect MPDIRECT]
+                     [--user USER] [--botname BOTNAME] [--bot] [--keeppinned]
+                     [--after AFTER] [--before BEFORE] [--types TYPES]
+                     [--pattern PATTERN] [--perform]
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --token TOKEN        Slack API token (https://api.slack.com/web)
+  --log                Create a log file in the current directory
+  --quiet              Run quietly, does not log messages deleted
+  --rate RATE          Delay between API calls (in seconds)
+  --message            Delete messages
+  --file               Delete files
+  --purge PURGE        Purge messages from all channels
+  --channel CHANNEL    Channel name's, e.g., general
+  --direct DIRECT      Direct message's name, e.g., sherry
+  --group GROUP        Private group's name
+  --mpdirect MPDIRECT  Multiparty direct message's name, e.g.,
+                       sherry,james,johndoe
+  --user USER          Delete messages/files from certain user
+  --botname BOTNAME    Delete messages/files from certain bots
+  --bot                Delete messages from bots
+  --keeppinned         exclude pinned messages from deletion
+  --after AFTER        Delete messages/files newer than this time (YYYYMMDD)
+  --before BEFORE      Delete messages/files older than this time (YYYYMMDD)
+  --types TYPES        Delete files of a certain type, e.g., posts,pdfs
+  --pattern PATTERN    Delete messages with specified pattern (regex)
+  --perform            Perform the task
+```
 
 ## Usage
 
@@ -56,6 +90,8 @@ slack-cleaner --token <TOKEN> --file --types snippets,images
 
 # Purge messages from all channels for a user
 slack-cleaner --token <TOKEN> --message --purge yes --user johndoe
+
+# TODO add pattern example, add keep_pinned example, add quiet
 
 # Always have a look at help message
 slack-cleaner --help
