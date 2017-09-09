@@ -84,7 +84,7 @@ def get_id_by_name(list_dict, key_name):
 def purge_channels(time_range, user_id=None, bot=False):
 
     for c in channel_dict:
-        print "Cleaning Channel: ",channel_dict[c]
+        logger.info("Cleaning Channel: %s", channel_dict[c])
         clean_channel(c, time_range, user_id, args.bot)
 
 def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None, keep_pinned=False):
@@ -117,7 +117,8 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None,
         has_more = res['has_more']
 
         if len(messages) == 0:
-            print('No more messsages')
+            if not args.quiet:
+              logger.info('No more messsages')
             break
 
         for m in messages:
@@ -146,7 +147,7 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False, pattern=None,
 
             # Exceptions
             else:
-                print('Weird message')
+                logger.error('Weird message')
                 pp.pprint(m)
 
         if args.rate_limit:
@@ -174,7 +175,7 @@ def delete_message_on_channel(channel_id, message):
             pp.pprint(message)
             return
 
-        if not args.quiet
+        if not args.quiet:
             logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
                        + get_user_name(message)
                        + ' : %s'
@@ -185,7 +186,7 @@ def delete_message_on_channel(channel_id, message):
 
     # Just simulate the task
     else:
-        if not args.quiet
+        if not args.quiet:
             logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
                        + get_user_name(message)
                        + ' :  %s'
@@ -246,7 +247,7 @@ def delete_file(file):
             pp.pprint(file)
             return
 
-        if not args.quiet
+        if not args.quiet:
             logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
                        + file.get('title', ''))
 
@@ -254,10 +255,9 @@ def delete_file(file):
             time.sleep(args.rate_limit)
 
     # Just simulate the task
-    else:
-        if not args.quiet
-            logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
-                       + file.get('title', ''))
+    elif not args.quiet:
+        logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
+                   + file.get('title', ''))
 
     counter.increase()
 
