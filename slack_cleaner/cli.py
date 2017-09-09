@@ -80,20 +80,20 @@ def skip_to_delete(m):
   return False
 
 
-def clean_channel(channel_id, time_range, user_id=None, bot=False):
+def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False):
   # Setup time range for query
   oldest = time_range.start_ts
   latest = time_range.end_ts
 
   _api_end_point = None
   # Set to the right API end point
-  if args.channel_name:
+  if channel_type == 'channel':
     _api_end_point = slack.channels.history
-  elif args.direct_name:
+  elif channel_type == 'direct':
     _api_end_point = slack.im.history
-  elif args.group_name:
+  elif channel_type == 'group':
     _api_end_point = slack.groups.history
-  elif args.mpdirect_name:
+  elif channel_type == 'mpdirect':
     _api_end_point = slack.mpim.history
 
   has_more = True
@@ -314,19 +314,19 @@ def resolve_channels():
   _channels = []
   # If channel's name is supplied
   if args.channel_name:
-    _channels.extend(get_channel_ids_by_pattern(args.channel_name, not args.regex))
+    _channels.extend([(id, name, 'channel'), for (id, name) in get_channel_ids_by_pattern(args.channel_name, not args.regex)])
 
   # If DM's name is supplied
   if args.direct_name:
-    _channels.extend(get_direct_ids_by_pattern(args.direct_name, not args.regex))
+    _channels.extend([(id, name, 'direct'), for (id, name) in get_direct_ids_by_pattern(args.direct_name, not args.regex)])
 
   # If channel's name is supplied
   if args.group_name:
-    _channels.extend(get_group_ids_by_pattern(args.group_name, not args.regex))
+    _channels.extend([(id, name, 'group'), for (id, name) in get_group_ids_by_pattern(args.group_name, not args.regex)])
 
   # If group DM's name is supplied
   if args.mpdirect_name:
-    _channels.extend(get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))
+    _channels.extend([(id, name, 'mpdirect'), for (id, name) in get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name)])
 
   return _channels
 
@@ -353,10 +353,10 @@ def message_cleaner():
   if not _channels:
     sys.exit('Channel, direct message or private group not found')
 
-  for (channel_id, channel_name) in _channels:
-    logger.info('Deleting messages from channel %s', channel_name)
+  for (channel_id, channel_name, channel_type) in _channels:
+    logger.info('Deleting messages from %s %s', channel_type, channel_name)
     # Delete messages on certain channel
-    clean_channel(channel_id, time_range, user_id=_user_id, bot=args.bot)
+    clean_channel(channel_id, channel_type, time_range, user_id=_user_id, bot=args.bot)
 
 
 def file_cleaner():
@@ -369,8 +369,8 @@ def file_cleaner():
     remove_files(time_range, user_id=_user_id, types=_types, channel_id=None)
 
 
-  for (channel_id, channel_name) in _channels:
-    logger.info('Deleting files from channel %s', channel_name)
+  for (channel_id, channel_name, channel_type) in _channels:
+    logger.info('Deleting files from %s %s', channel_type, channel_name)
     remove_files(time_range, user_id=_user_id, types=_types, channel_id=channel_id)
 
 
