@@ -2,18 +2,20 @@
 
 Bulk delete messages and files on Slack.
 
+this is a fork of https://github.com/kfei/slack-cleaner
+
 ## Install
 
 Install from Pip:
 
 ```bash
-pip install slack-cleaner
+pip install -e git+https://github.com/sgratzl/slack-cleaner.git#egg=slack-cleaner
 ```
 
 If you prefer Docker, there is a pre-built Docker image as well:
 
 ```bash
-docker pull kfei/slack-cleaner
+docker pull sgratzl/slack-cleaner
 ```
 
 ## Usage
@@ -65,24 +67,18 @@ You will need to generate a Slack legacy token to use slack-cleaner. You can gen
 
 ## Tips
 
-After the task, a backup file `slack-cleaner.<timestamp>.log` will be created
-in current directory if `--log` is supplied.
+After the task, a backup file `slack-cleaner.<timestamp>.log` will be created in current directory if `--log` is supplied.
 
-If any API problem occurred, try `--rate=<delay-in-seconds>` to reduce the API
-call rate (which by default is unlimited).
+If any API problem occurred, try `--rate=<delay-in-seconds>` to reduce the API call rate (which by default is unlimited).
 
 If you see the following warning from `urllib3`, consider to install missing
-packages: `pip install --upgrade requests[security]` or just upgrade your
-Python to 2.7.9.
+packages: `pip install --upgrade requests[security]` or just upgrade your Python to 2.7.9.
 
 ```
 InsecurePlatformWarning: A true SSLContext object is not available.
           This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail.
           For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
 ```
-
-Create tokens here: https://api.slack.com/custom-integrations/legacy-tokens
-Manage existing tokens at the above URL and/or here: https://api.slack.com/tokens
 
 ## Credits
 
