@@ -23,11 +23,11 @@ Just prepend `docker run -it --rm sgratzl/slack-cleaner` for each command or jum
 ## Arguments
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
-                     [--as_user] [--message | --file]
-                     [--purge PURGE | --channel CHANNEL | --direct DIRECT | --group GROUP | --mpdirect MPDIRECT]
-                     [--user USER] [--botname BOTNAME] [--bot] [--keeppinned]
-                     [--after AFTER] [--before BEFORE] [--types TYPES]
-                     [--pattern PATTERN] [--perform]
+                     [--as_user] [--message | --file] [--regex]
+                     [--channel CHANNEL] [--direct DIRECT] [--group GROUP]
+                     [--mpdirect MPDIRECT] [--user USER] [--botname BOTNAME]
+                     [--bot] [--keeppinned] [--after AFTER] [--before BEFORE]
+                     [--types TYPES] [--pattern PATTERN] [--perform]
 
 optional arguments:
   -h, --help           show this help message and exit
@@ -39,7 +39,7 @@ optional arguments:
                        users in this context are considered authed users.
   --message            Delete messages
   --file               Delete files
-  --purge PURGE        Purge messages from all channels
+  --regex              Interpret channel, direct, group, and mpdirect as regex
   --channel CHANNEL    Channel name's, e.g., general
   --direct DIRECT      Direct message's name, e.g., sherry
   --group GROUP        Private group's name
