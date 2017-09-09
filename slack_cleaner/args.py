@@ -33,7 +33,7 @@ class Args():
     g_type.add_argument('--file', action='store_true',
                         help='Delete files')
 
-    p.add_argument('--regex', help='Interpret channel, direct, group, and mpdirect as regex')
+    p.add_argument('--regex', action='store_true', help='Interpret channel, direct, group, and mpdirect as regex')
     p.add_argument('--channel',
                         help='Channel name\'s, e.g., general')
     p.add_argument('--direct',

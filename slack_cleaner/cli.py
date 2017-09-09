@@ -66,33 +66,6 @@ def init_user_dict():
 init_user_dict()
 
 
-# Construct a local channel dict for further usage
-def init_channel_dict():
-  res = slack.channels.list().body
-  if not res['ok']:
-    return
-  channels = res['channels']
-
-  for c in channels:
-    channel_dict[c['id']] = c['name']
-
-
-# Init channel dict
-init_channel_dict()
-
-
-def get_id_by_name(list_dict, key_name):
-  for d in list_dict:
-    if d['name'] == key_name:
-      return d['id']
-
-
-def purge_channels(time_range, user_id=None, bot=False):
-  for c in channel_dict:
-    logger.info("Cleaning Channel: %s", channel_dict[c])
-    clean_channel(c, time_range, user_id, args.bot)
-
-
 def skip_to_delete(m):
   if args.keep_pinned and m.get('pinned_to'):
     return True
@@ -113,9 +86,7 @@ def clean_channel(channel_id, time_range, user_id=None, bot=False):
 
   _api_end_point = None
   # Set to the right API end point
-  if args.purge_name:
-    _api_end_point = slack.channels.history
-  elif args.channel_name:
+  if args.channel_name:
     _api_end_point = slack.channels.history
   elif args.direct_name:
     _api_end_point = slack.im.history
@@ -279,7 +250,7 @@ def match_by_key(pattern, items, key, equality_match):
     return [item['id'] for item in items if pattern == key(item)]
   # ensure it matches the whole string
   regex = re.compile('^' + pattern + '$', re.I)
-  return [item['id'] for item in items if regex.match(key(item))]
+  return [(item['id'], key(item)) for item in items if regex.match(key(item))]
 
 
 def get_channel_ids_by_pattern(pattern, equality_match):
@@ -316,7 +287,7 @@ def get_mpdirect_ids_by_pattern(pattern):
     # the regex has to match all members
     return all(regex.match(name) for name in names)
 
-  return [mpim['id'] for mpim in mpims if matches(mpim['members'])]
+  return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
 
 
 def get_mpdirect_ids_compatbility(name):
@@ -331,32 +302,29 @@ def get_mpdirect_ids_compatbility(name):
   for mpim in mpims:
     # match the mpdirect user ids
     if set(mpim['members']) == members:
-      return [mpim['id']]
+      return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members']))]
   return []
 
 
 def resolve_channels():
-  _channel_ids = []
+  _channels = []
   # If channel's name is supplied
   if args.channel_name:
-    _channel_ids.extend(get_channel_ids_by_pattern(args.channel_name, not args.regex))
+    _channels.extend(get_channel_ids_by_pattern(args.channel_name, not args.regex))
 
   # If DM's name is supplied
   if args.direct_name:
-    _channel_ids.extend(get_direct_ids_by_pattern(args.direct_name, not args.regex))
+    _channels.extend(get_direct_ids_by_pattern(args.direct_name, not args.regex))
 
   # If channel's name is supplied
   if args.group_name:
-    _channel_ids.extend(get_group_ids_by_pattern(args.group_name, not args.regex))
+    _channels.extend(get_group_ids_by_pattern(args.group_name, not args.regex))
 
   # If group DM's name is supplied
   if args.mpdirect_name:
-    _channel_ids.extend(get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))
+    _channels.extend(get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))
 
-  if not _channel_ids:
-    sys.exit('Channel, direct message or private group not found')
-
-  return _channel_ids
+  return _channels
 
 
 def resolve_user():
@@ -375,21 +343,31 @@ def resolve_user():
 
 
 def message_cleaner():
-  _channel_ids = resolve_channels()
+  _channels = resolve_channels()
   _user_id = resolve_user()
 
-  for _channel_id in _channel_ids:
+  if not _channels:
+    sys.exit('Channel, direct message or private group not found')
+
+  for (channel_id, channel_name) in _channels:
+    logger.info('Deleting messages from channel %s', channel_name)
     # Delete messages on certain channel
-    clean_channel(_channel_id, time_range, user_id=_user_id, bot=args.bot)
+    clean_channel(channel_id, time_range, user_id=_user_id, bot=args.bot)
 
 
 def file_cleaner():
   _types = args.types if args.types else None
-  _channel_ids = resolve_channels()
+  _channels = resolve_channels()
   _user_id = resolve_user()
 
-  for _channel_id in _channel_ids:
-    remove_files(time_range, user_id=_user_id, types=_types, channel_id=_channel_id)
+  if not _channels:
+    logger.info('Deleting all matching files')
+    remove_files(time_range, user_id=_user_id, types=_types, channel_id=None)
+
+
+  for (channel_id, channel_name) in _channels:
+    logger.info('Deleting files from channel %s', channel_name)
+    remove_files(time_range, user_id=_user_id, types=_types, channel_id=channel_id)
 
 
 def main():
