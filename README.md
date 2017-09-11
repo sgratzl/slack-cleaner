@@ -62,7 +62,7 @@ optional arguments:
 # Delete all messages from a channel
 slack-cleaner --token <TOKEN> --message --channel general --user "*"
 
-# Delete all messages from a private group
+# Delete all messages from a private group aka private channel
 slack-cleaner --token <TOKEN> --message --group hr --user "*"
 
 # Delete all messages from a direct message channel
