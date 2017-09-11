@@ -248,7 +248,7 @@ def get_user_id_by_name(name):
 
 def match_by_key(pattern, items, key, equality_match):
   if equality_match:
-    return [item['id'] for item in items if pattern == key(item)]
+    return [(item['id'], key(item)) for item in items if pattern == key(item)]
   # ensure it matches the whole string
   regex = re.compile('^' + pattern + '$', re.I)
   return [(item['id'], key(item)) for item in items if regex.match(key(item))]
