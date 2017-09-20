@@ -220,7 +220,7 @@ def delete_file(file):
   if args.perform:
     try:
       # No response is a good response
-      slack.files.delete(file['id'], as_user=args.as_user)
+      slack.files.delete(file['id'])
       counter.increase()
       if not args.quiet:
         logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
