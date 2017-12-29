@@ -241,7 +241,7 @@ def delete_file(file):
 
 
 def get_user_id_by_name(name):
-  for k, v in user_dict.iteritems():
+  for k, v in user_dict.items():
     if v == name:
       return k
 
