@@ -56,6 +56,14 @@ optional arguments:
   --perform            Perform the task
 ```
 
+## Minimal Slack permission scopes required
+
+- `channels:history`
+- `channels:read`
+- `chat:write:bot`
+- `users:read`
+
+
 ## Usage
 
 ```bash
