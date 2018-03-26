@@ -130,7 +130,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
             delete_message_on_channel(channel_id, m)
 
         # Delete bot messages
-        if bot and m.get('subtype') == 'bot_message':
+        if bot and (m.get('subtype') == 'bot_message' or 'bot_id' in m):
           delete_message_on_channel(channel_id, m)
 
       # Exceptions
