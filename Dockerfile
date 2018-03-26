@@ -4,7 +4,9 @@ MAINTAINER Samuel Gratzl <samuel_gratzl@gmx.at>
 
 VOLUME ["/backup"]
 WORKDIR /backup
-ENTRYPOINT ["/bin/sh"]
+ENTRYPOINT ["/bin/bash"]
+
+RUN apk add bash
 # for better layers
 RUN pip install slacker
 
