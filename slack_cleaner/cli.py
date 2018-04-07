@@ -378,42 +378,46 @@ def show_infos():
     show user and channel information
   """
 
-  def print_dict(d):
-    m = Colors.GREEN + 'users:' + Colors.ENDC
+  def print_dict(name, d):
+    m = Colors.GREEN + name + ':' + Colors.ENDC
     for k, v in d.items():
       m += '\n' + k + ' ' + str(v)
     logger.info(m)
 
-  # id,name
-  print_dict(user_dict)
+  res = slack.users.list().body
+  if res['ok'] and res['members']:
+    users = { c['id']: c['name'] + ' = ' + c['profile']['real_name'] for c in res['members']}
+  else:
+    users = {}
+  print_dict('users', users)
 
   res = slack.channels.list().body
   if res['ok'] and res['channels']:
     channels = { c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
-  print_dict(channels)
-
-  res = slack.im.list().body
-  if res['ok'] and res['ims']:
-    ims = { c['id']: c['user'] for c in res['ims']}
-  else:
-    ims = {}
-  print_dict(ims)
+  print_dict('public channels', channels)
 
   res = slack.groups.list().body
   if res['ok'] and res['groups']:
     groups = { c['id']: c['name'] for c in res['groups']}
   else:
     groups = {}
-  print_dict(groups)
+  print_dict('private channels', groups)
 
-  mpin = slack.mpim.list().body
+  res = slack.im.list().body
+  if res['ok'] and res['ims']:
+    ims = { c['id']: user_dict[c['user']] for c in res['ims']}
+  else:
+    ims = {}
+  print_dict('instant messages', ims)
+
+  res = slack.mpim.list().body
   if res['ok'] and res['groups']:
-    mpin = { c['id']: c['members'] for c in res['groups']}
+    mpin = { c['id']: c['name'] for c in res['groups']}
   else:
     mpin = {}
-  print_dict(mpin)
+  print_dict('multi user direct messages', mpin)
 
 
 def main():

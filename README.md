@@ -23,7 +23,7 @@ Just use `docker run -it --rm sgratzl/slack-cleaner -c "slack-cleaner ..."` for 
 ## Arguments
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
-                     [--as_user] [--message | --file] [--regex]
+                     [--as_user] [--message | --file | --info] [--regex]
                      [--channel CHANNEL] [--direct DIRECT] [--group GROUP]
                      [--mpdirect MPDIRECT] [--user USER] [--botname BOTNAME]
                      [--bot] [--keeppinned] [--after AFTER] [--before BEFORE]
@@ -39,6 +39,7 @@ optional arguments:
                        users in this context are considered authed users.
   --message            Delete messages
   --file               Delete files
+  --info               Show information
   --regex              Interpret channel, direct, group, and mpdirect as regex
   --channel CHANNEL    Channel name's, e.g., general
   --direct DIRECT      Direct message's name, e.g., sherry
@@ -98,10 +99,14 @@ slack-cleaner --token <TOKEN> --file --user johndoe
 # Delete all snippets and images
 slack-cleaner --token <TOKEN> --file --types snippets,images
 
+# Show information about users, channels:
+slack-cleaner --token <TOKEN> --info
+
 # TODO add pattern example, add keep_pinned example, add quiet
 
 # Always have a look at help message
 slack-cleaner --help
+
 ```
 
 ## Tokens
