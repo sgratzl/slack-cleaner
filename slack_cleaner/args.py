@@ -32,6 +32,8 @@ class Args():
                         help='Delete messages')
     g_type.add_argument('--file', action='store_true',
                         help='Delete files')
+    g_type.add_argument('--info', action='store_true',
+                        help='Show information')
 
     p.add_argument('--regex', action='store_true', help='Interpret channel, direct, group, and mpdirect as regex')
     p.add_argument('--channel',
@@ -78,6 +80,8 @@ class Args():
         p.error('A channel is required when using --message')
 
     self.token = args.token
+
+    self.show_infos = args.info
 
     self.log = args.log
     self.quiet = args.quiet

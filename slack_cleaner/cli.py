@@ -50,9 +50,6 @@ logger.info('Running slack-cleaner v' + __version__)
 # User dict
 user_dict = {}
 
-# Channel dict
-channel_dict = {}
-
 
 # Construct a local user dict for further usage
 def init_user_dict():
@@ -376,7 +373,53 @@ def file_cleaner():
     remove_files(time_range, user_id=_user_id, types=_types, channel_id=channel_id)
 
 
+def show_infos():
+  """
+    show user and channel information
+  """
+
+  def print_dict(d):
+    m = Colors.GREEN + 'users:' + Colors.ENDC
+    for k, v in d.items():
+      m += '\n' + k + ' ' + str(v)
+    logger.info(m)
+
+  # id,name
+  print_dict(user_dict)
+
+  res = slack.channels.list().body
+  if res['ok'] and res['channels']:
+    channels = { c['id']: c['name'] for c in res['channels']}
+  else:
+    channels = {}
+  print_dict(channels)
+
+  res = slack.im.list().body
+  if res['ok'] and res['ims']:
+    ims = { c['id']: c['user'] for c in res['ims']}
+  else:
+    ims = {}
+  print_dict(ims)
+
+  res = slack.groups.list().body
+  if res['ok'] and res['groups']:
+    groups = { c['id']: c['name'] for c in res['groups']}
+  else:
+    groups = {}
+  print_dict(groups)
+
+  mpin = slack.mpim.list().body
+  if res['ok'] and res['groups']:
+    mpin = { c['id']: c['members'] for c in res['groups']}
+  else:
+    mpin = {}
+  print_dict(mpin)
+
+
 def main():
+  if args.show_infos:
+    show_infos()
+
   # Dispatch
   if args.delete_message:
     message_cleaner()
