@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import time
+from colorama import init, Fore
+
+
+init()
 
 
 class Colors():
-  HEADER = '\033[95m'
-  BLUE = '\033[94m'
-  GREEN = '\033[92m'
-  YELLOW = '\033[93m'
-  RED = '\033[91m'
-  ENDC = '\033[0m'
-  BOLD = '\033[1m'
-  UNDERLINE = '\033[4m'
+  BLUE = Fore.BLUE
+  GREEN = Fore.GREEN
+  YELLOW = Fore.YELLOW
+  RED = Fore.RED
+  ENDC = Fore.RESET
 
 
 class TimeRange():
