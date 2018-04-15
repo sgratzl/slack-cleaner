@@ -4,5 +4,5 @@
 
 from .cleaner import SlackCleaner
 
-s = SlackCleaner('***REMOVED***')
+s = SlackCleaner('')
 print(s)
