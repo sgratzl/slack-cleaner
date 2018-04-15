@@ -4,40 +4,69 @@ import logging
 import datetime
 import pprint
 
-def SlackLogger():
+
+class SlackLoggerRound():
+  def __init__(self, name):
+    self.deleted = 0
+    self.errors = 0
+    self.name = name
+
+  def __str__(self):
+    return '{n}: deleted: {d}, errors: {e}'.format(n=self.name, d=self.deleted, e=self.errors)
+
+  def __call__(self, error):
+    if error:
+      self.errors += 1
+    else:
+      self.deleted += 1
+
+
+class SlackLogger():
   def __init__(self, to_file=False, sleep_for = 0):
     self._sleep_for = sleep_for
-    self._logger = logging.getLogger('slack-cleaner')
+    self.log = logging.getLogger('slack-cleaner')
     self._pp = pprint.PrettyPrinter(indent=2)
-    self._deleted = 0
-    self._errors = []
+    self._rounds = [SlackLoggerRound('overall')]
 
     if to_file:
       ts = datetime.now().strftime('%Y%m%d-%H%M%S')
       file_log_handler = logging.FileHandler('slack-cleaner.' + ts + '.log')
       file_log_handler.setLevel(logging.DEBUG)
-      self._logger.addHandler(file_log_handler)
+      self.log.addHandler(file_log_handler)
 
     # And always display on console
     s = logging.StreamHandler()
     s.setLevel(logging.INFO)
-    logger.addHandler(s)
+    self.log.addHandler(s)
 
   def __call__(self, file_or_msg, error):
+    for round in self._rounds:
+      round(error)
+
     if error:
-      self._error.append(file_or_msg)
       sys.stdout.write(Fore.RED + 'x' + Fore.RESET)
       sys.stdout.flush()
-      self._logger.warning('cannot delete entry: %s: %s', file_or_msg, error)
+      self.log.warning('cannot delete entry: %s: %s', file_or_msg, error)
     else:
-      self._deleted += 1
       sys.stdout.write('.')
       sys.stdout.flush()
-      self._logger.debug('deleted entry: %s', file_or_msg)
+      self.og.debug('deleted entry: %s', file_or_msg)
 
     if self._sleep_for > 0:
       from time import sleep
       sleep(self._sleep_for)
 
+  def push(name):
+    r = SlackLoggerRound(name)
+    self.log.info('start deleting: %s', name)
+    self._rounds.append(r)
+    return r
+
+  def pop():
+    r = self._rounds[-1]
+    del self._rounds[-1]
+    self.log.info('stop deleting: %s', r)
+    return r
+
   def __str__(self):
-    return 'deleted: {d}, errors: {e}'.format(d=self._deleted, e=len(self._errors)
+    return str(self._rounds[0])

@@ -18,7 +18,7 @@ class SlackUser():
     return '{s.name} ({s.id}) {s.real_name}'.format(s = self)
 
   def files(self):
-    return SlackFile.list(self._slack.files, user=self.id)
+    return SlackFile.list(self._slack, user=self.id)
 
 
 class SlackChannel():
@@ -55,7 +55,7 @@ class SlackChannel():
 
         # Delete user messages
         if m['type'] == 'message':
-          yield SlackMessage(m, user, self, self._slack.chat)
+          yield SlackMessage(m, user, self, self._slack.api.chat)
 
   def replies_to(msg):
     res = self.api.replies(self.id, msg.ts).body
@@ -67,10 +67,17 @@ class SlackChannel():
         user = next(u for u in self.members if u.id == m['user'], None)
       # Delete user messages
       if m['type'] == 'message':
-        yield SlackMessage(m, user, self, self._slack.chat)
+        yield SlackMessage(m, user, self, self._slack.api.chat)
 
   def files(self):
-    return SlackFile.list(self._slack.files, channel=self.id)
+    return SlackFile.list(self._slack, channel=self.id)
+
+
+class SlackDirectMessage(SlackChannel):
+  def __init__(self, entry, user, api, slack):
+    SlackChannel.__init__(self, entry, [user], api, slack)
+    self.name = user.name
+    self.user = user
 
 
 class SlackMessage():
@@ -82,6 +89,7 @@ class SlackMessage():
     self._entry = entry
     self.user = user
     self.bot = entry.get('subtype') == 'bot_message' or 'bot_id' in entry
+    self.pinned_to = entry.get('pinned_to', False)
 
   def delete(self, as_user=False):
     try:
@@ -98,24 +106,21 @@ class SlackMessage():
     return '{c}:{t}'.format(c=self._channel.name, t=self.ts)
 
 
-class SlackDirectMessage(SlackChannel):
-  def __init__(self, entry, user, api, slack):
-    SlackChannel.__init__(self, entry, [user], api, slack)
-    self.name = user.name
-    self.user = user
-
-
 class SlackFile():
-  def __init__(self, entry, api):
+  def __init__(self, entry, user, api):
     self.id = entry['id']
     self.name = entry['title']
+    self.text = self.name
+    self.user = user
+    self.pinned_to = entry.get('pinned_to', False)
     self._entry = entry
     self.api = api
 
   @staticmethod
-  def list(api, **kwargs):
+  def list(slack, **kwargs):
     page = 1
     has_more = True
+    api = slack.api.files
     while has_more:
       res = api.list(page=page, count=100, **kwargs).body
 
@@ -129,7 +134,7 @@ class SlackFile():
       page = current_page + 1
 
       for f in files:
-        yield SlackFile(f, api)
+        yield SlackFile(f, slack.user[f['user']], api)
 
 
   def __str__(self):
