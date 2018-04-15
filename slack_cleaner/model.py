@@ -1,4 +1,4 @@
-import time
+# -*- coding: utf-8 -*-
 
 
 class SlackUser():
@@ -17,8 +17,8 @@ class SlackUser():
   def __str__(self):
     return '{s.name} ({s.id}) {s.real_name}'.format(s = self)
 
-  def files(self):
-    return SlackFile.list(self._slack, user=self.id)
+  def files(self, ts_from=None, ts_to=None, types=None):):
+    return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
 
 
 class SlackChannel():
@@ -33,7 +33,9 @@ class SlackChannel():
   def __str__(self):
     return self.name
 
-  def history(oldest = None, latest = None):
+  def history(ts_from=None, ts_to=None):
+    latest = to_to
+    oldest = to_from
     has_more = True
     while has_more:
       res = self.api.history(self.id, latest, oldest, count=1000).body
@@ -69,8 +71,8 @@ class SlackChannel():
       if m['type'] == 'message':
         yield SlackMessage(m, user, self, self._slack.api.chat)
 
-  def files(self):
-    return SlackFile.list(self._slack, channel=self.id)
+  def files(self, ts_from=None, ts_to=None, types=None):
+    return SlackFile.list(self._slack, channel=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
 
 
 class SlackDirectMessage(SlackChannel):
@@ -117,12 +119,12 @@ class SlackFile():
     self.api = api
 
   @staticmethod
-  def list(slack, **kwargs):
+  def list(slack, user=None, ts_from=None, ts_to=None, types=None, channel=None):
     page = 1
     has_more = True
     api = slack.api.files
     while has_more:
-      res = api.list(page=page, count=100, **kwargs).body
+      res = api.list(user=user, ts_from=ts_from, to_to=ts_to, type=types, channel=channel, page=page, count=100).body
 
       if not res['ok']:
         return
@@ -135,7 +137,6 @@ class SlackFile():
 
       for f in files:
         yield SlackFile(f, slack.user[f['user']], api)
-
 
   def __str__(self):
     return self.name

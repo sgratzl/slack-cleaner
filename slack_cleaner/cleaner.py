@@ -33,8 +33,8 @@ class SlackCleaner():
     # all different types with a similar interface
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
-  def files(self):
-    return SlackFile.list(self._slack.files)
+  def files(self, **kwargs):
+    return SlackFile.list(self._slack.files, **kwargs)
 
 
 def _safe_list(res, attr):
