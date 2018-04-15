@@ -1,15 +1,34 @@
 # -*- coding: utf-8 -*-
 
+class AndPredicate():
+  def __init__(self, fs = None):
+    self.fs = fs or []
 
-def is_not_pinned(msg_or_file):
-  return not msg_or_file.pinned_to
+  def __call__(self, x):
+    if not self.fs:
+      return True
+    return all(f(x) for f in self.fs)
+
+  def __add__(self, other):
+    if isinstance(other, AndPredicate):
+      self.fs = self.fs + other.fs
+      return self
+    self.fs.append(other)
+    return self
+
+class Predicate():
+  def __init__(self, f):
+    self.__call__ = f
+
+  def __add__(self, other):
+    return AndPredicate([self.f, other])
 
 
-def is_bot(msg_or_user):
-  return msg_or_user.bot
+is_not_pinned = Predicate(lambda msg_or_file: not msg_or_file.pinned_to)
+is_bot = Predicate(lambda: msg_or_user: msg_or_user.bot)
 
 
-def match_pattern(pattern, attr = 'name'):
+def match(pattern, attr = 'name'):
   import re
   regex = re.compile('^' + pattern + '$', re.I)
 
@@ -17,25 +36,32 @@ def match_pattern(pattern, attr = 'name'):
     m = regex.search(getattr(msg_or_file, attr))
     return m is not None
 
-  return matches
+  return Predicate(matches)
 
 
-def equal_to(name):
-  return lambda msg_or_file: msg_or_file.name == name
+def name(name):
+  return Predicate(lambda msg_or_file: msg_or_file.name == name)
 
 
-def match_text_pattern(pattern):
+def match_text(pattern):
   return match_pattern(pattenr, 'text')
 
 
-def from_user(user):
-  return lambda msg_or_file: msg_or_file.user == user
+def match_user(pattern):
+  import re
+  regex = re.compile('^' + pattern + '$', re.I)
+  return Predicate(lambda user: any(regex.search(u) for u in [user.id, user.name, user.display_name, user.email, user.real_name]))
 
 
-def from_users(users):
+def is_member(user):
+  return Predicate(lambda channel: user in channel.members)
+
+
+def by_user(user):
+  return Predicate(lambda msg_or_file: msg_or_file.user == user)
+
+
+def by_users(users):
   s = set(users)
-  return lambda msg_or_file: msg_or_file.user in s
+  return Predicate(lambda msg_or_file: msg_or_file.user in s)
 
-
-def match_all(predicates):
-  return lambda msg_or_file: all(p(msg_or_file) for p in predicates)
