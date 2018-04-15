@@ -143,7 +143,7 @@ class SlackFile():
 
   def delete(self):
     try:
-      # No response is a good response
+      # No response is a good response so no error
       self.api.delete(self.id)
       return None
     except Exception as error:
