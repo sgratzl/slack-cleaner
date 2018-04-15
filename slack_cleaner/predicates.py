@@ -42,7 +42,10 @@ class OrPredicate():
 
 class Predicate():
   def __init__(self, f):
-    self.__call__ = f
+    self.f = f
+
+  def __call__(self, x):
+    return self.f(x)
 
   def __and__(self, other):
     return AndPredicate([self.f, other])
@@ -52,7 +55,7 @@ class Predicate():
 
 
 is_not_pinned = Predicate(lambda msg_or_file: not msg_or_file.pinned_to)
-is_bot = Predicate(lambda: msg_or_user: msg_or_user.bot)
+is_bot = Predicate(lambda msg_or_user: msg_or_user.bot)
 
 
 def match(pattern, attr = 'name'):
@@ -77,7 +80,7 @@ def match_text(pattern):
 def match_user(pattern):
   import re
   regex = re.compile('^' + pattern + '$', re.I)
-  return Predicate(lambda user: any(regex.search(u) for u in [user.id, user.name, user.display_name, user.email, user.real_name]))
+  return Predicate(lambda user: any(regex.search(u or '') for u in [user.id, user.name, user.display_name, user.email, user.real_name]))
 
 
 def is_member(user):

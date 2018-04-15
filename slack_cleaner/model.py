@@ -17,7 +17,10 @@ class SlackUser():
   def __str__(self):
     return u'{s.name} ({s.id}) {s.real_name}'.format(s = self)
 
-  def files(self, ts_from=None, ts_to=None, types=None):):
+  def __repr__(self):
+    return self.__str__()
+
+  def files(self, ts_from=None, ts_to=None, types=None):
     return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
 
 
@@ -27,15 +30,18 @@ class SlackChannel():
     self.name = entry.get('name', self.id)
     self.members = members
     self.api = api
-    self._slack = _slack
+    self._slack = slack
     self._entry = entry
 
   def __str__(self):
     return self.name
 
-  def history(ts_from=None, ts_to=None):
-    latest = to_to
-    oldest = to_from
+  def __repr__(self):
+    return self.__str__()
+
+  def history(self, ts_from=None, ts_to=None):
+    latest = ts_to
+    oldest = ts_from
     has_more = True
     while has_more:
       res = self.api.history(self.id, latest, oldest, count=1000).body
@@ -53,20 +59,20 @@ class SlackChannel():
 
         user = None
         if 'user' in m:
-          user = next(u for u in self.members if u.id == m['user'], None)
+          user = next((u for u in self.members if u.id == m['user']), None)
 
         # Delete user messages
         if m['type'] == 'message':
           yield SlackMessage(m, user, self, self._slack.api.chat)
 
-  def replies_to(msg):
+  def replies_to(self, msg):
     res = self.api.replies(self.id, msg.ts).body
     if not res['ok']:
-      return []
+      return
     for m in res['messages']:
       user = None
       if 'user' in m:
-        user = next(u for u in self.members if u.id == m['user'], None)
+        user = next((u for u in self.members if u.id == m['user']), None)
       # Delete user messages
       if m['type'] == 'message':
         yield SlackMessage(m, user, self, self._slack.api.chat)
@@ -87,7 +93,7 @@ class SlackMessage():
     self.ts = entry['ts']
     self.text = entry['text']
     self._channel = channel
-    self.api = = api
+    self.api = api
     self._entry = entry
     self.user = user
     self.bot = entry.get('subtype') == 'bot_message' or 'bot_id' in entry
@@ -96,7 +102,7 @@ class SlackMessage():
   def delete(self, as_user=False):
     try:
       # No response is a good response
-      self.api.delete(self.channel.id, self.ts, as_user=as_user)
+      self.api.delete(self._channel.id, self.ts, as_user=as_user)
       return None
     except Exception as error:
       return error
@@ -107,6 +113,8 @@ class SlackMessage():
   def __str__(self):
     return u'{c}:{t}'.format(c=self._channel.name, t=self.ts)
 
+  def __repr__(self):
+    return self.__str__()
 
 class SlackFile():
   def __init__(self, entry, user, api):
@@ -140,6 +148,9 @@ class SlackFile():
 
   def __str__(self):
     return self.name
+
+  def __repr__(self):
+    return self.__str__()
 
   def delete(self):
     try:
