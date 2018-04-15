@@ -1,3 +1,8 @@
-from .cli import main
+#from .cli import main
 
-main()
+#main()
+
+from .cleaner import SlackCleaner
+
+s = SlackCleaner('***REMOVED***')
+print(s)

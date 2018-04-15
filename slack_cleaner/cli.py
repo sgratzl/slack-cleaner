@@ -18,12 +18,6 @@ from slack_cleaner.args import Args
 args = Args()
 time_range = TimeRange(args.start_time, args.end_time)
 
-# Nice slack API wrapper
-with Session() as session:
-  slack = Slacker(args.token, session=session)
-  if hasattr(slack, 'rate_limit_retries'):
-    slack.rate_limit_retries = 2
-
 # So we can print slack's object beautifully
 pp = pprint.PrettyPrinter(indent=4)
 
@@ -46,24 +40,6 @@ logger.addHandler(stderr_log_handler)
 
 # Print version information
 logger.info('Running slack-cleaner v' + __version__)
-
-# User dict
-user_dict = {}
-
-
-# Construct a local user dict for further usage
-def init_user_dict():
-  res = slack.users.list().body
-  if not res['ok']:
-    return
-  members = res['members']
-
-  for m in members:
-    user_dict[m['id']] = m['name']
-
-
-# Init user dict
-init_user_dict()
 
 
 def skip_to_delete(m):
