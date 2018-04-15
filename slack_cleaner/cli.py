@@ -18,8 +18,6 @@ from slack_cleaner.args import Args
 args = Args()
 time_range = TimeRange(args.start_time, args.end_time)
 
-# So we can print slack's object beautifully
-pp = pprint.PrettyPrinter(indent=4)
 
 # Count how many items we deleted
 counter = Counter()
@@ -28,15 +26,7 @@ counter = Counter()
 logger = logging.getLogger('slack-cleaner')
 logger.setLevel(10)
 
-# Log deleted messages/files if we're gonna actually log the task
-if args.log:
-  ts = datetime.now().strftime('%Y%m%d-%H%M%S')
-  file_log_handler = logging.FileHandler('slack-cleaner.' + ts + '.log')
-  logger.addHandler(file_log_handler)
 
-# And always display on console
-stderr_log_handler = logging.StreamHandler()
-logger.addHandler(stderr_log_handler)
 
 # Print version information
 logger.info('Running slack-cleaner v' + __version__)

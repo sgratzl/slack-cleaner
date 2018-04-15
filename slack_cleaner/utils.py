@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import sys
 from colorama import init, Fore
 
 
@@ -30,13 +31,6 @@ class TimeRange():
     # Ensure we have the end time since slack will return in different way
     # if no end time supplied
     self.end_ts = parse_ts(end_time)
-    if self.end_ts == '0':
+    if self.end_ts == '0':j
       self.end_ts = str(time.time())
 
-
-class Counter():
-  def __init__(self):
-    self.total = 0
-
-  def increase(self):
-    self.total += 1
