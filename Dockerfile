@@ -2,9 +2,10 @@ FROM python:2.7-alpine
 
 LABEL maintainer="Samuel Gratzl <samuel_gratzl@gmx.at>"
 
-VOLUME ["/backup"]
+VOLUME "/backup"
 WORKDIR /backup
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT "/bin/bash"
+CMD python -i -c "from slack_cleaner import *"
 
 RUN apk add --update bash && rm -rf /var/cache/apk/*
 # for better layers
@@ -12,4 +13,3 @@ RUN pip install slacker colorama
 
 ADD . /data
 RUN pip install -r /data/requirements.txt
-RUN pip install /data
