@@ -9,19 +9,46 @@ class AndPredicate():
       return True
     return all(f(x) for f in self.fs)
 
-  def __add__(self, other):
+  def __and__(self, other):
     if isinstance(other, AndPredicate):
       self.fs = self.fs + other.fs
       return self
     self.fs.append(other)
     return self
 
+  def __or__(self, other):
+    return OrPredicate([self.f, other])
+
+
+class OrPredicate():
+  def __init__(self, fs = None):
+    self.fs = fs or []
+
+  def __call__(self, x):
+    if not self.fs:
+      return False
+    return any(f(x) for f in self.fs)
+
+  def __or__(self, other):
+    if isinstance(other, OrPredicate):
+      self.fs = self.fs + other.fs
+      return self
+    self.fs.append(other)
+    return self
+
+  def __and__(self, other):
+    return AndPredicate([self.f, other])
+
+
 class Predicate():
   def __init__(self, f):
     self.__call__ = f
 
-  def __add__(self, other):
+  def __and__(self, other):
     return AndPredicate([self.f, other])
+
+  def __or__(self, other):
+    return OrPredicate([self.f, other])
 
 
 is_not_pinned = Predicate(lambda msg_or_file: not msg_or_file.pinned_to)
