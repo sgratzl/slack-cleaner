@@ -17,19 +17,20 @@ class SlackCleaner():
     self._user_lookup = {u.id : u for u in self.users}
 
     self.channels = [
-      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.channels)
+      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.channels, slack.chat)
       for m in _safe_list(slack.channels.list(), 'channels')
     ]
     self.groups = [
-      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.groups)
+      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.groups, slack.chat)
       for m in _safe_list(slack.groups.list(), 'groups')
     ]
     self.mpim = [
-      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.mpim)
+      SlackChannel(m, [self._user_lookup[u] for u in m['members']], slack.mpim, slack.chat)
       for m in _safe_list(slack.mpim.list(), 'groups')
     ]
-    self.ims = [SlackDirectMessage(m, self._user_lookup[m['user']], slack.im) for m in _safe_list(slack.im.list(), 'ims')]
+    self.ims = [SlackDirectMessage(m, self._user_lookup[m['user']], slack.im, slack.chat) for m in _safe_list(slack.im.list(), 'ims')]
 
+    # all different types with a similar interface
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
 

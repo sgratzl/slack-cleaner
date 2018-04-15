@@ -285,42 +285,6 @@ def get_mpdirect_ids_compatbility(name):
   return []
 
 
-def resolve_channels():
-  _channels = []
-  # If channel's name is supplied
-  if args.channel_name:
-    _channels.extend([(id, name, 'channel') for (id, name) in get_channel_ids_by_pattern(args.channel_name, not args.regex)])
-
-  # If DM's name is supplied
-  if args.direct_name:
-    _channels.extend([(id, name, 'direct') for (id, name) in get_direct_ids_by_pattern(args.direct_name, not args.regex)])
-
-  # If channel's name is supplied
-  if args.group_name:
-    _channels.extend([(id, name, 'group') for (id, name) in get_group_ids_by_pattern(args.group_name, not args.regex)])
-
-  # If group DM's name is supplied
-  if args.mpdirect_name:
-    _channels.extend([(id, name, 'mpdirect') for (id, name) in (get_mpdirect_ids_by_pattern(args.mpdirect_name) if args.regex else get_mpdirect_ids_compatbility(args.mpdirect_name))])
-
-  return _channels
-
-
-def resolve_user():
-  _user_id = None
-  # If user's name is also supplied
-  if args.user_name:
-    # A little bit tricky here, we use -1 to indicates `--user=*`
-    if args.user_name == "*":
-      _user_id = -1
-    else:
-      _user_id = get_user_id_by_name(args.user_name)
-
-    if _user_id is None:
-      sys.exit('User not found')
-  return _user_id
-
-
 def message_cleaner():
   _channels = resolve_channels()
   _user_id = resolve_user()
@@ -348,52 +312,6 @@ def file_cleaner():
     logger.info('Deleting files from %s %s', channel_type, channel_name)
     remove_files(time_range, user_id=_user_id, types=_types, channel_id=channel_id)
 
-
-def show_infos():
-  """
-    show user and channel information
-  """
-
-  def print_dict(name, d):
-    m = Colors.GREEN + name + ':' + Colors.ENDC
-    for k, v in d.items():
-      m += '\n' + k + ' ' + str(v)
-    logger.info(m)
-
-  res = slack.users.list().body
-  if res['ok'] and res['members']:
-    users = { c['id']: c['name'] + ' = ' + c['profile']['real_name'] for c in res['members']}
-  else:
-    users = {}
-  print_dict('users', users)
-
-  res = slack.channels.list().body
-  if res['ok'] and res['channels']:
-    channels = { c['id']: c['name'] for c in res['channels']}
-  else:
-    channels = {}
-  print_dict('public channels', channels)
-
-  res = slack.groups.list().body
-  if res['ok'] and res['groups']:
-    groups = { c['id']: c['name'] for c in res['groups']}
-  else:
-    groups = {}
-  print_dict('private channels', groups)
-
-  res = slack.im.list().body
-  if res['ok'] and res['ims']:
-    ims = { c['id']: user_dict[c['user']] for c in res['ims']}
-  else:
-    ims = {}
-  print_dict('instant messages', ims)
-
-  res = slack.mpim.list().body
-  if res['ok'] and res['groups']:
-    mpin = { c['id']: c['name'] for c in res['groups']}
-  else:
-    mpin = {}
-  print_dict('multi user direct messages', mpin)
 
 
 def main():
