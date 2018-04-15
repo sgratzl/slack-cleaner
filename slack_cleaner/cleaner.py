@@ -28,13 +28,16 @@ class SlackCleaner():
       SlackChannel(m, [self.user[u] for u in m['members']], slack.mpim, self)
       for m in _safe_list(slack.mpim.list(), 'groups')
     ]
-    self.ims = [SlackDirectMessage(m, self.user[m['user']], slack.im, self) for m in _safe_list(slack.im.list(), 'ims')]
+    self.ims = [
+      SlackDirectMessage(m, self.user[m['user']], slack.im, self)
+      for m in _safe_list(slack.im.list(), 'ims')
+    ]
 
     # all different types with a similar interface
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
-  def files(self, **kwargs):
-    return SlackFile.list(self._slack.files, **kwargs)
+  def files(self, user=None, ts_from=None, ts_to=None, types=None, channel=None):
+    return SlackFile.list(self._slack.files, user=user, ts_from=ts_from, to_to=ts_to, type=types, channel=channel)
 
 
 def _safe_list(res, attr):

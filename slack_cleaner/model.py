@@ -15,7 +15,7 @@ class SlackUser():
     self.bot = self.is_bot or self.is_app_user
 
   def __str__(self):
-    return '{s.name} ({s.id}) {s.real_name}'.format(s = self)
+    return u'{s.name} ({s.id}) {s.real_name}'.format(s = self)
 
   def files(self, ts_from=None, ts_to=None, types=None):):
     return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
@@ -105,7 +105,7 @@ class SlackMessage():
     return self._channel.replies_of(self)
 
   def __str__(self):
-    return '{c}:{t}'.format(c=self._channel.name, t=self.ts)
+    return u'{c}:{t}'.format(c=self._channel.name, t=self.ts)
 
 
 class SlackFile():
