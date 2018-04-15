@@ -40,7 +40,7 @@ class SlackLogger():
     s.setLevel(logging.INFO)
     self.log.addHandler(s)
 
-  def __call__(self, file_or_msg, error):
+  def __call__(self, file_or_msg, error=None):
     for round in self._rounds:
       round(error)
 
