@@ -9,7 +9,7 @@ CMD python -i -c "from slack_cleaner import *"
 
 RUN apk add --update bash && rm -rf /var/cache/apk/*
 # for better layers
-RUN pip install slacker colorama
+ADD ./requirements.txt /data/
+RUN pip --no-cache-dir install -r /data/requirements.txt
 
 ADD . /data
-RUN pip install -r /data/requirements.txt
