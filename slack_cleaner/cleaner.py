@@ -13,6 +13,8 @@ class SlackCleaner:
   def __init__(self, token, log_to_file=False, sleep_for=0):
     """
     :param token: the slack token, see README.md for details
+    :param log_to_file: enable loggint to file
+    :param sleep_for: sleep for x (float) seconds between delete calls
     """
 
     self.log = SlackLogger(log_to_file, sleep_for)
@@ -55,6 +57,15 @@ class SlackCleaner:
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
   def files(self, user=None, ts_from=None, ts_to=None, types=None, channel=None):
+    """
+    list all known slack files for the given parameter as a generator
+    :param user: limit to given user id
+    :param ts_from: from
+    :param ts_to: to
+    :param types: see types in slack api, default 'all'
+    :param channel: limit to a certain channel id
+    :return: generator of SlackFile objects
+    """
     return SlackFile.list(self, user=user, ts_from=ts_from, ts_to=ts_to, types=types, channel=channel)
 
 

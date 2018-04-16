@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 
 class AndPredicate:
-  def __init__(self, fs=None):
-    self.fs = fs or []
+  def __init__(self, c=None):
+    self.c = c or []
 
   def __call__(self, x):
-    if not self.fs:
+    if not self.c:
       return True
-    return all(f(x) for f in self.fs)
+    return all(f(x) for f in self.c)
 
   def __and__(self, other):
     if isinstance(other, AndPredicate):
-      self.fs = self.fs + other.fs
+      self.c = self.c + other.c
       return self
-    self.fs.append(other)
+    self.c.append(other)
     return self
 
   def __or__(self, other):
@@ -21,19 +21,19 @@ class AndPredicate:
 
 
 class OrPredicate:
-  def __init__(self, fs=None):
-    self.fs = fs or []
+  def __init__(self, c=None):
+    self.c = c or []
 
   def __call__(self, x):
-    if not self.fs:
+    if not self.c:
       return False
-    return any(f(x) for f in self.fs)
+    return any(f(x) for f in self.c)
 
   def __or__(self, other):
     if isinstance(other, OrPredicate):
-      self.fs = self.fs + other.fs
+      self.c = self.c + other.c
       return self
-    self.fs.append(other)
+    self.c.append(other)
     return self
 
   def __and__(self, other):
@@ -74,7 +74,7 @@ def name(name):
 
 
 def match_text(pattern):
-  return match_pattern(pattenr, 'text')
+  return match(pattern, 'text')
 
 
 def match_user(pattern):

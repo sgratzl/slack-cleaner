@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-
 class SlackUser:
+  """
+  internal model of a slack user
+  """
+
   def __init__(self, member, slack):
     self.id = member['id']
     self._slack = slack
@@ -21,10 +24,20 @@ class SlackUser:
     return self.__str__()
 
   def files(self, ts_from=None, ts_to=None, types=None):
+    """
+    list all files of the given user
+    :param ts_from: from
+    :param ts_to: to
+    :param types: see slack api doc
+    :return:
+    """
     return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
 
 
 class SlackChannel:
+  """
+  internal model of a slack channel, group, mpim, im
+  """
   def __init__(self, entry, members, api, slack):
     self.id = entry['id']
     self.name = entry.get('name', self.id)
@@ -40,6 +53,14 @@ class SlackChannel:
     return self.__str__()
 
   def history(self, ts_from=None, ts_to=None):
+    """
+    retrieve the history of all messages as a generator
+    :param ts_from: from
+    :param ts_to: to
+    :return: generator of SlackMessage
+    """
+    ts_from = _parse_time(ts_from)
+    ts_to = _parse_time(ts_to)
     self._slack.log.debug('list history of %s (ts_from=%s, ts_to=%s)', self, ts_from, ts_to)
     latest = ts_to
     oldest = ts_from
@@ -67,6 +88,11 @@ class SlackChannel:
           yield SlackMessage(m, user, self, self._slack)
 
   def replies_to(self, msg):
+    """
+    returns the replies to a given SlackMessage instance
+    :param msg: message instance to find replies to
+    :return:
+    """
     res = self.api.replies(self.id, msg.ts).body
     if not res['ok']:
       return
@@ -83,6 +109,9 @@ class SlackChannel:
 
 
 class SlackDirectMessage(SlackChannel):
+  """
+  internal model of a slack direct message channel
+  """
   def __init__(self, entry, user, api, slack):
     super(SlackDirectMessage, self).__init__(entry, [user], api, slack)
     self.name = user.name
@@ -90,6 +119,9 @@ class SlackDirectMessage(SlackChannel):
 
 
 class SlackMessage:
+  """
+  internal model of a slack message
+  """
   def __init__(self, entry, user, channel, slack):
     self.ts = entry['ts']
     self.text = entry['text']
@@ -122,6 +154,9 @@ class SlackMessage:
 
 
 class SlackFile:
+  """
+  internal representation of a slack file
+  """
   def __init__(self, entry, user, slack):
     self.id = entry['id']
     self.name = entry['title']
@@ -134,6 +169,8 @@ class SlackFile:
 
   @staticmethod
   def list(slack, user=None, ts_from=None, ts_to=None, types=None, channel=None):
+    ts_from = _parse_time(ts_from)
+    ts_to = _parse_time(ts_to)
     page = 1
     has_more = True
     api = slack.api.files
@@ -162,6 +199,10 @@ class SlackFile:
     return self.__str__()
 
   def delete(self):
+    """
+    delete the file itself
+    :return:  None if no error occurred
+    """
     try:
       # No response is a good response so no error
       self.api.delete(self.id)
@@ -170,3 +211,19 @@ class SlackFile:
     except Exception as error:
       self._slack.log.deleted(self, error)
       return error
+
+
+def _parse_time(t):
+  if t is None:
+    return None
+  if isinstance(t, int):
+    return t
+
+  import time
+  try:
+    if len(t) == 8:
+      return time.mktime(time.strptime(t, "%Y%m%d"))
+    else:
+      return time.mktime(time.strptime(t, "%Y%m%d%H%M"))
+  except:
+    return None

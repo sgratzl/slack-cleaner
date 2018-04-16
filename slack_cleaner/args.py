@@ -107,3 +107,7 @@ class Args():
     self.types = args.types
 
     self.perform = args.perform
+
+
+def run(args):
+  pass
