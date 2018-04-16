@@ -15,7 +15,7 @@ class SlackUser():
     self.bot = self.is_bot or self.is_app_user
 
   def __str__(self):
-    return u'{s.name} ({s.id}) {s.real_name}'.format(s = self)
+    return u'{s.name} ({s.id}) {s.real_name}'.format(s=self)
 
   def __repr__(self):
     return self.__str__()
@@ -115,6 +115,7 @@ class SlackMessage():
 
   def __repr__(self):
     return self.__str__()
+
 
 class SlackFile():
   def __init__(self, entry, user, api):

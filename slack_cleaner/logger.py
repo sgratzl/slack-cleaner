@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+import datetime
+import logging
+import pprint
 import sys
 from colorama import Fore
-import logging
-import datetime
-import pprint
 
 
 class SlackLoggerRound():
@@ -23,7 +23,7 @@ class SlackLoggerRound():
 
 
 class SlackLogger():
-  def __init__(self, to_file=False, sleep_for = 0):
+  def __init__(self, to_file=False, sleep_for=0):
     self._sleep_for = sleep_for
     self.log = logging.getLogger('slack-cleaner')
     self._pp = pprint.PrettyPrinter(indent=2)

@@ -1,12 +1,11 @@
-
 from requests.sessions import Session
 from slacker import Slacker
+
 from .model import SlackUser, SlackChannel, SlackDirectMessage, SlackFile
 
 
 class SlackCleaner():
   def __init__(self, token):
-
     with Session() as session:
       slack = self.api = Slacker(token, session=session)
       if hasattr(slack, 'rate_limit_retries'):
@@ -14,7 +13,7 @@ class SlackCleaner():
 
     self.users = [SlackUser(m, self) for m in _safe_list(slack.users.list(), 'members')]
 
-    self.user = {u.id : u for u in self.users}
+    self.user = {u.id: u for u in self.users}
 
     self.channels = [
       SlackChannel(m, [self.user[u] for u in m['members']], slack.channels, self)
@@ -37,7 +36,7 @@ class SlackCleaner():
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
   def files(self, user=None, ts_from=None, ts_to=None, types=None, channel=None):
-    return SlackFile.list(self._slack.files, user=user, ts_from=ts_from, to_to=ts_to, type=types, channel=channel)
+    return SlackFile.list(self.api.files, user=user, ts_from=ts_from, to_to=ts_to, type=types, channel=channel)
 
 
 def _safe_list(res, attr):

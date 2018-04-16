@@ -37,14 +37,14 @@ class Args():
 
     p.add_argument('--regex', action='store_true', help='Interpret channel, direct, group, and mpdirect as regex')
     p.add_argument('--channel',
-                        help='Channel name\'s, e.g., general')
+                   help='Channel name\'s, e.g., general')
     p.add_argument('--direct',
-                        help='Direct message\'s name, e.g., sherry')
+                   help='Direct message\'s name, e.g., sherry')
     p.add_argument('--group',
-                        help='Private group\'s name')
+                   help='Private group\'s name')
     p.add_argument('--mpdirect',
-                        help='Multiparty direct message\'s name, e.g., ' +
-                             'sherry,james,johndoe')
+                   help='Multiparty direct message\'s name, e.g., ' +
+                        'sherry,james,johndoe')
 
     # Conditions
     p.add_argument('--user',
@@ -76,7 +76,7 @@ class Args():
 
     if args.message:
       if (args.channel is None and args.direct is None and
-              args.group is None and args.mpdirect is None):
+        args.group is None and args.mpdirect is None):
         p.error('A channel is required when using --message')
 
     self.token = args.token

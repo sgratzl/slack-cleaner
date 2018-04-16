@@ -8,6 +8,7 @@ def get_mpdirect_ids_by_pattern(pattern):
   mpims = res['groups']
 
   regex = re.compile('^' + pattern + '$', re.I)
+
   def matches(members):
     names = [user_dict[m] for m in mpim['members']]
     # has to match at least one permutation of the members
@@ -17,4 +18,3 @@ def get_mpdirect_ids_by_pattern(pattern):
     return False
 
   return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
-
