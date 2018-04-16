@@ -1,0 +1,8 @@
+version: '2.0'
+services:
+  python:
+    build:
+      context: .
+    volumes:
+      - '.:/data'
+    working_dir: '/data'
