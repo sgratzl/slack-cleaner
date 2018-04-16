@@ -1,2 +1,5 @@
 slacker
 colorama
+sphinx
+sphinx-autobuild
+recommonmark
