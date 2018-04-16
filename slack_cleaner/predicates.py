@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class AndPredicate():
+class AndPredicate:
   def __init__(self, fs=None):
     self.fs = fs or []
 
@@ -17,10 +17,10 @@ class AndPredicate():
     return self
 
   def __or__(self, other):
-    return OrPredicate([self.f, other])
+    return OrPredicate([self, other])
 
 
-class OrPredicate():
+class OrPredicate:
   def __init__(self, fs=None):
     self.fs = fs or []
 
@@ -37,7 +37,7 @@ class OrPredicate():
     return self
 
   def __and__(self, other):
-    return AndPredicate([self.f, other])
+    return AndPredicate([self, other])
 
 
 class Predicate():
