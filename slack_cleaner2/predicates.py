@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class AndPredicate:
   def __init__(self, c=None):
     self.c = c or []

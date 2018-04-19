@@ -44,7 +44,6 @@ def _channels(slack, args):
 def _delete_messages(slack, args):
   channels = _channels(slack, args)
 
-
   pred = AndPredicate()
 
   user = _resolve_user(slack, args)
@@ -74,7 +73,6 @@ def _delete_messages(slack, args):
 def _delete_files(slack, args):
   user = _resolve_user(slack, args)
   channels = _channels(slack, args)
-
 
   pred = AndPredicate()
 

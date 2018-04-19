@@ -82,12 +82,12 @@ class SlackLogger:
     self.info(u'stop deleting: %s', r)
     return r
 
-  def __exit__(self):
+  def __exit__(self, *args):
     self.pop()
     return self
 
   def __str__(self):
     return unicode(self._rounds[0])
 
-  def summary():
+  def summary(self):
     self.info('summary %s', self)

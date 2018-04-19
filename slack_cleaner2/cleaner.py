@@ -26,7 +26,6 @@ class SlackCleaner:
       if hasattr(slack, 'rate_limit_retries'):
         slack.rate_limit_retries = 2
 
-
     self.users = [SlackUser(m, self) for m in _safe_list(slack.users.list(), 'members')]
     self.log.debug('collected users %s', self.users)
 
@@ -81,7 +80,6 @@ class SlackCleaner:
     for c in channels:
       for msg in c.msgs(ts_from=ts_from, ts_to=ts_to):
         yield msg
-
 
 
 def _safe_list(res, attr):

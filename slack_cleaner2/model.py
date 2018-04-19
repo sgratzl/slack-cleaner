@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+
 class SlackUser:
   """
   internal model of a slack user
@@ -238,5 +239,5 @@ def _parse_time(t):
       return time.mktime(time.strptime(t, "%Y%m%d"))
     else:
       return time.mktime(time.strptime(t, "%Y%m%d%H%M"))
-  except:
+  except e:
     return None

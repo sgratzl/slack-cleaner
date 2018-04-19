@@ -7,7 +7,7 @@ import pytest
 
 from click.testing import CliRunner
 
-from slack_cleaner2 import slack_cleaner2
+# from slack_cleaner2 import slack_cleaner2
 from slack_cleaner2 import cli
 
 
