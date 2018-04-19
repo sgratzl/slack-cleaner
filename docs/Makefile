@@ -3,8 +3,8 @@
 
 # You can set these variables from the command line.
 SPHINXOPTS    =
-SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = slackcleaner
+SPHINXBUILD   = python -msphinx
+SPHINXPROJ    = slack_cleaner2
 SOURCEDIR     = .
 BUILDDIR      = _build
 

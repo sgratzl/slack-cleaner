@@ -1,7 +1,7 @@
-__author__ = 'Samuel Gratzl, Lin, Ke-fei'
-__authoremail__ = 'samuel_gratzl@gmx.at, kfei@kfei.net'
-__version__ = '1.0.0'
+# -*- coding: utf-8 -*-
 
-from .cleaner import SlackCleaner
-from .predicates import is_not_pinned, is_bot, match, name, match_text, match_user, is_member, by_user, by_users
-from .util import a_while_ago
+"""Top-level package for slack_cleaner2."""
+
+__author__ = """Samuel Gratzl"""
+__email__ = 'samuel-gratzl@gmx.at'
+__version__ = '0.1.0'

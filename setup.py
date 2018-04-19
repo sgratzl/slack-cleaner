@@ -1,55 +1,55 @@
-import re
-import sys
-import io
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""The setup script."""
+
 from setuptools import setup, find_packages
-from setuptools.command.test import test as TestCommand
 
-pkg_file = io.open("slack_cleaner2/__init__.py", encoding='utf-8').read()
-metadata = dict(re.findall("__([a-z]+)__\s*=\s*'([^']+)'", pkg_file))
-description = io.open('README.md', encoding='utf-8').read()
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
 
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
 
-class Tox(TestCommand):
-  def finalize_options(self):
-    TestCommand.finalize_options(self)
-    self.test_args = []
-    self.test_suite = True
+with open('requirements.txt') as req:
+    requirements = req.read().split('\n')
 
-  def run_tests(self):
-    #import here, cause outside the eggs aren't loaded
-    import tox
-    errcode = tox.cmdline(self.test_args)
-    sys.exit(errcode)
+setup_requirements = ['pytest-runner', ]
 
+test_requirements = ['pytest', ]
 
 setup(
-    name='slack_cleaner2',
-    description='Bulk delete messages/files on Slack.',
-    packages=find_packages(),
-    author=metadata['author'],
-    author_email=metadata['authoremail'],
-    version=metadata['version'],
-    url='https://github.com/kfei/slack-cleaner',
-    license="MIT",
-    keywords="slack, clean, delete, message, file",
-    long_description=description,
+    author="Samuel Gratzl",
+    author_email='samuel-gratzl@gmx.at',
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
+        'Natural Language :: English',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
     ],
-    tests_require=['tox'],
-    test_suite='slack_cleaner2.test.test_slack_cleaner2',
-    extras_require={
-        'testing': ['tox'],
-    },
-    cmdclass={'test': Tox},
-    install_requires=['slacker', 'colorama'],
+    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
     entry_points={
         'console_scripts': [
-            'slack-cleaner = slack_cleaner2.cli:run'
-        ]
-    }
+            'slack-cleaner=slack_cleaner2.cli:main',
+        ],
+    },
+    install_requires=requirements,
+    license="MIT license",
+    long_description=readme + '\n\n' + history,
+    include_package_data=True,
+    keywords='slack_cleaner2',
+    name='slack_cleaner2',
+    packages=find_packages(include=['slack_cleaner2']),
+    setup_requires=setup_requirements,
+    test_suite='tests',
+    tests_require=test_requirements,
+    url='https://github.com/sgratzl/slack_cleaner2',
+    version='0.1.0',
+    zip_safe=False,
 )

@@ -1,8 +1,1 @@
-slacker
-colorama
-sphinx
-sphinx-autobuild
-recommonmark
-pylint
-pytest-cov
-tox
+Click>=6.0
