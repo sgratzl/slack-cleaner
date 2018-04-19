@@ -7,8 +7,6 @@ description = open('README.md').read()
 
 from setuptools import setup, find_packages
 
-install_requires =
-
 setup(
     name='slack_cleaner2',
     description='Bulk delete messages/files on Slack.',
