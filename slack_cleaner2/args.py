@@ -75,8 +75,7 @@ class Args():
     args = p.parse_args()
 
     if args.message:
-      if (args.channel is None and args.direct is None and
-          args.group is None and args.mpdirect is None):
+      if (args.channel is None and args.direct is None and args.group is None and args.mpdirect is None):
         p.error('A channel is required when using --message')
 
     self.token = args.token

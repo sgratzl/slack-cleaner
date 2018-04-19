@@ -239,5 +239,5 @@ def _parse_time(t):
       return time.mktime(time.strptime(t, "%Y%m%d"))
     else:
       return time.mktime(time.strptime(t, "%Y%m%d%H%M"))
-  except e:
+  except Error:
     return None
