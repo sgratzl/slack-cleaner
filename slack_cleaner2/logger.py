@@ -87,7 +87,7 @@ class SlackLogger:
     return self
 
   def __str__(self):
-    return unicode(self._rounds[0])
+    return self._rounds[0]
 
   def summary(self):
     self.info('summary %s', self)
