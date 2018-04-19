@@ -4,3 +4,5 @@ sphinx
 sphinx-autobuild
 recommonmark
 pylint
+pytest-cov
+tox
