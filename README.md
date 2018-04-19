@@ -1,19 +1,20 @@
 # slack_cleaner2
 
+[![License: MIT][mit-image]][mit-url] [![CircleCI][ci-image]][ci-url] [![PyPi][pypi-image]][pypi-url] [Read the Docs][docs-image]][docs-url]
+
 Bulk delete messages and files on Slack.
 
 ## Install
 
-Install from Pip:
+Install from PyPi:
 
 ```bash
-pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
+pip install slack_cleaner2
 ```
 
-If you prefer Docker, there is a pre-built Docker image as well:
-
+latest version
 ```bash
-docker pull sgratzl/slack-cleaner
+pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
 ```
 
 #ä Usage
@@ -23,13 +24,16 @@ In contrast to the original version this version is a pure python package only t
 basic usage
 
 ```python
-from slack_cleaner import *
+from slack_cleaner2 import *
 
 s = SlackCleaner('SECRET TOKEN')
 # list of users
 s.users
 # list of all kind of channels
 s.conversations
+
+for msg in s.msgs(filter(match('.*-bots'), s.conversations)):
+  msg.delete()
 ```
 
 
@@ -67,3 +71,12 @@ InsecurePlatformWarning: A true SSLContext object is not available.
 ## Credits
 
 **To all the people who can only afford a free plan. :cry:**
+
+[mit-image]: https://img.shields.io/badge/License-MIT-yellow.svg
+[mit-url]: https://opensource.org/licenses/MIT
+[ci-image]: https://circleci.com/gh/sgratzl/slack_cleaner2.svg?style=shield
+[ci-url]: https://circleci.com/gh/sgratzl/slack_cleaner2
+[pypi-image]: https://pypip.in/version/slack_cleaner2/badge.svg
+[pypi-url]: https://pypi.python.org/pypi/slack_cleaner2/
+[docs-image]: https://readthedocs.org/projects/slack_cleaner2/badge/
+[docs-url]: https://readthedocs.org/projects/slack_cleaner2
