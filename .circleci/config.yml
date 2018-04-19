@@ -25,7 +25,7 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            make test lint
+            make install lint test coverage docs
       - store_artifacts:
           path: test-reports/
           destination: tr1
@@ -53,7 +53,7 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            make test lint
+            make install lint test coverage docs
       - store_artifacts:
           path: test-reports/
           destination: tr1
