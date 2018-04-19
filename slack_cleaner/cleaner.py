@@ -68,6 +68,21 @@ class SlackCleaner:
     """
     return SlackFile.list(self, user=user, ts_from=ts_from, ts_to=ts_to, types=types, channel=channel)
 
+  def msgs(self, channels=None, ts_from=None, ts_to=None):
+    """
+    list all known slack messages for the given parameter as a generator
+    :param channels: limit to given channels default all conversations
+    :param ts_from: from
+    :param ts_to: to
+    :return: generator of SlackMessage objects
+    """
+    if not channels:
+      channels = self.conversations
+    for c in channels:
+      for msg in c.msgs(ts_from=ts_from, ts_to=ts_to):
+        yield msg
+
+
 
 def _safe_list(res, attr):
   res = res.body

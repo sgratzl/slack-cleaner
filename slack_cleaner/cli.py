@@ -57,7 +57,7 @@ def _delete_messages(slack, args):
 
   total = 0
   for channel in channels:
-    for msg in channel.history(args.start_time, args.end_time):
+    for msg in channel.msgs(args.start_time, args.end_time):
       if not pred(msg):
         continue
       if args.perform:

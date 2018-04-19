@@ -25,13 +25,26 @@ class SlackUser:
 
   def files(self, ts_from=None, ts_to=None, types=None):
     """
-    list all files of the given user
+    list all files of the this user
     :param ts_from: from
     :param ts_to: to
     :param types: see slack api doc
     :return:
     """
     return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
+
+  def msgs(self, ts_from=None, ts_to=None):
+    """
+    list all messages of the this user
+    :param ts_from: from
+    :param ts_to: to
+    :return:
+    """
+    from .predicates import is_member, by_user
+    by_me = by_user(self)
+    for msg in self._slack.msgs(filter(is_member(self), self._slack.conversations), ts_from=ts_from, ts_to=ts_to):
+      if by_me(msg):
+        yield msg
 
 
 class SlackChannel:
@@ -52,16 +65,16 @@ class SlackChannel:
   def __repr__(self):
     return self.__str__()
 
-  def history(self, ts_from=None, ts_to=None):
+  def msgs(self, ts_from=None, ts_to=None):
     """
-    retrieve the history of all messages as a generator
+    retrieve the msgs of all messages as a generator
     :param ts_from: from
     :param ts_to: to
     :return: generator of SlackMessage
     """
     ts_from = _parse_time(ts_from)
     ts_to = _parse_time(ts_to)
-    self._slack.log.debug('list history of %s (ts_from=%s, ts_to=%s)', self, ts_from, ts_to)
+    self._slack.log.debug('list msgs of %s (ts_from=%s, ts_to=%s)', self, ts_from, ts_to)
     latest = ts_to
     oldest = ts_from
     has_more = True

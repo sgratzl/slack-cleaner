@@ -67,17 +67,24 @@ class SlackLogger:
       from time import sleep
       sleep(self._sleep_for)
 
-  def push(self, name):
+  def group(self, name):
     r = SlackLoggerRound(name)
     self.info(u'start deleting: %s', name)
     self._rounds.append(r)
     return r
+
+  def __enter__(self):
+    return self
 
   def pop(self):
     r = self._rounds[-1]
     del self._rounds[-1]
     self.info(u'stop deleting: %s', r)
     return r
+
+  def __exit__(self):
+    self.pop()
+    return self
 
   def __str__(self):
     return unicode(self._rounds[0])
