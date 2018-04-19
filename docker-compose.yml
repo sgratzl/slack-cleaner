@@ -6,4 +6,4 @@ services:
     volumes:
       - '.:/data'
     working_dir: '/data'
-    command: bash -c tail -F anything
+    command:  tail -F anything
