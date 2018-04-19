@@ -10,11 +10,11 @@ class SlackCleaner:
   base class for cleaning up slack providing access to channels and users
   """
 
-  def __init__(self, token, log_to_file=False, sleep_for=0):
+  def __init__(self, token, sleep_for=0, log_to_file=False):
     """
     :param token: the slack token, see README.md for details
-    :param log_to_file: enable loggint to file
     :param sleep_for: sleep for x (float) seconds between delete calls
+    :param log_to_file: enable loggint to file
     """
 
     self.log = SlackLogger(log_to_file, sleep_for)

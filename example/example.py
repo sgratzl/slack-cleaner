@@ -1,7 +1,7 @@
 from slack_cleaner import *
 import os
 
-s = SlackCleaner(os.environ['TOKEN'], false, 1)
+s = SlackCleaner(os.environ['TOKEN'], 1, false)
 
 with s.log.group('clear bot channels'):
   for msg in s.msgs(filter(match('.*-bots'), s.conversations)):
