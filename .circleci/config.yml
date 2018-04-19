@@ -20,7 +20,7 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            python setu.py test
+            python setup.py test
       - store_artifacts:
           path: test-reports/
           destination: tr1
