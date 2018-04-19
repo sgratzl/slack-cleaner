@@ -1,4 +1,4 @@
-# slack-cleaner
+# slack_cleaner2
 
 Bulk delete messages and files on Slack.
 
@@ -7,7 +7,7 @@ Bulk delete messages and files on Slack.
 Install from Pip:
 
 ```bash
-pip install -e git+https://github.com/sgratzl/slack-cleaner.git#egg=slack-cleaner
+pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
 ```
 
 If you prefer Docker, there is a pre-built Docker image as well:

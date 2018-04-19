@@ -5,7 +5,7 @@ LABEL maintainer="Samuel Gratzl <samuel_gratzl@gmx.at>"
 VOLUME "/backup"
 WORKDIR /backup
 ENTRYPOINT "/bin/bash"
-CMD python -i -c "from slack_cleaner import *"
+CMD python -i -c "from slack_cleaner2 import *"
 
 RUN apk add --update bash && rm -rf /var/cache/apk/*
 # for better layers
@@ -13,3 +13,4 @@ ADD ./requirements.txt /data/
 RUN pip --no-cache-dir install -r /data/requirements.txt
 
 ADD . /data
+RUN pip --no-cache-dir install /data

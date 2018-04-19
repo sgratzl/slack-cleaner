@@ -1,16 +1,16 @@
 import re
 import sys
 
-pkg_file = open("slack_cleaner/__init__.py").read()
+pkg_file = open("slack_cleaner2/__init__.py").read()
 metadata = dict(re.findall("__([a-z]+)__\s*=\s*'([^']+)'", pkg_file))
 description = open('README.md').read()
 
 from setuptools import setup, find_packages
 
-install_requires = []
+install_requires =
 
 setup(
-    name='slack-cleaner',
+    name='slack_cleaner2',
     description='Bulk delete messages/files on Slack.',
     packages=find_packages(),
     author=metadata['author'],
@@ -27,15 +27,10 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
-
-    install_requires=[
-        'setuptools',
-        'slacker',
-        ] + install_requires,
-
+    install_requires=['slacker', 'colorama', 'setuptools'],
     entry_points={
         'console_scripts': [
-            'slack-cleaner = slack_cleaner.cli:main'
+            'slack-cleaner = slack_cleaner2.cli:run'
         ]
     }
 )

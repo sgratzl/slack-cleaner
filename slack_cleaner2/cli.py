@@ -2,6 +2,7 @@ from .cleaner import SlackCleaner
 from .predicates import match_user, match, name, AndPredicate, by_user, match_text, is_not_pinned, is_bot
 from colorama import Fore
 
+
 def _show_infos(slack, args):
   def print_dict(name, d):
     m = Fore.GREEN + name + ':' + Fore.RESET
@@ -16,10 +17,12 @@ def _show_infos(slack, args):
   print_dict('instant messages', {u.id: u.name for u in slack.ims})
   print_dict('mulit user direct messsages', {u.id: u.name for u in slack.mpim})
 
+
 def _resolve_user(slack, args):
   if args.user_name == '*':
     return None
   return next(filter(match_user(args.user_name), slack.users))
+
 
 def _channels(slack, args):
   channels = []
@@ -36,6 +39,7 @@ def _channels(slack, args):
     channels.extend(filter(filter_f(args.mpdirect_name), slack.mpim))
 
   return channels
+
 
 def _delete_messages(slack, args):
   channels = _channels(slack, args)
@@ -65,6 +69,7 @@ def _delete_messages(slack, args):
       total += 1
 
   slack.log.info('summary: %s', slack.log)
+
 
 def _delete_files(slack, args):
   user = _resolve_user(slack, args)
@@ -96,7 +101,10 @@ def _delete_files(slack, args):
 
   slack.log.info('summary: %s', slack.log)
 
-def run(args):
+
+def run():
+  from .args import Args
+  args = Args()
   slack = SlackCleaner(args.token, args.log, args.rate_limit)
 
   if args.show_infos:
