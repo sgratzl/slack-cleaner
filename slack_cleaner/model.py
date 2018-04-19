@@ -214,12 +214,12 @@ class SlackFile:
 
 
 def _parse_time(t):
+  import time
+
   if t is None:
     return None
-  if isinstance(t, int):
+  if isinstance(t, int) or isinstance(t, time):
     return t
-
-  import time
   try:
     if len(t) == 8:
       return time.mktime(time.strptime(t, "%Y%m%d"))
