@@ -3,3 +3,4 @@ colorama
 sphinx
 sphinx-autobuild
 recommonmark
+pylint
