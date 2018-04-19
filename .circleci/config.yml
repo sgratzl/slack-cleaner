@@ -1,6 +1,33 @@
 version: 2
 jobs:
-  build:
+  build-python27:
+    working_directory: ~/data
+    docker:
+      - image: circleci/python:2.7
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps2-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      - run:
+          command: |
+            pip intall py2venv
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+          paths:
+            - "venv"
+      - run:
+          command: |
+            . venv/bin/activate
+            make test lint
+      - store_artifacts:
+          path: test-reports/
+          destination: tr1
+      - store_test_results:
+          path: test-reports/
+  build-python36:
     working_directory: ~/data
     docker:
       - image: circleci/python:3.6.4
@@ -13,8 +40,6 @@ jobs:
             python3 -m venv venv
             . venv/bin/activate
             pip install -r requirements.txt
-            pip install tox tox-pyenv
-            pyenv local 2.7.12 3.4 3.5 3.6
       - save_cache:
           key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
           paths:
@@ -22,10 +47,17 @@ jobs:
       - run:
           command: |
             . venv/bin/activate
-            make test-all
+            make test lint
       - store_artifacts:
           path: test-reports/
           destination: tr1
       - store_test_results:
           path: test-reports/
 
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build-python27
+      - build-python36
