@@ -3,8 +3,9 @@
 """
 from requests.sessions import Session
 from slacker import Slacker
-from .model import SlackUser, SlackChannel, SlackDirectMessage, SlackFile
+
 from .logger import SlackLogger
+from .model import SlackUser, SlackChannel, SlackDirectMessage, SlackFile
 
 
 class SlackCleaner(object):

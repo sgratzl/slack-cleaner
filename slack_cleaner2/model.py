@@ -55,6 +55,7 @@ class SlackChannel(object):
   """
   internal model of a slack channel, group, mpim, im
   """
+
   def __init__(self, entry, members, api, slack):
     self.id = entry['id']
     self.name = entry.get('name', self.id)
@@ -127,6 +128,7 @@ class SlackDirectMessage(SlackChannel):
   """
   internal model of a slack direct message channel
   """
+
   def __init__(self, entry, user, api, slack):
     super(SlackDirectMessage, self).__init__(entry, [user], api, slack)
     self.name = user.name
@@ -137,6 +139,7 @@ class SlackMessage(object):
   """
   internal model of a slack message
   """
+
   def __init__(self, entry, user, channel, slack):
     self.ts = entry['ts']
     self.text = entry['text']
@@ -178,6 +181,7 @@ class SlackFile(object):
   """
   internal representation of a slack file
   """
+
   def __init__(self, entry, user, slack):
     self.id = entry['id']
     self.name = entry['title']

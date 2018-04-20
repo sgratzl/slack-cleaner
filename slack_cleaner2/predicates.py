@@ -9,6 +9,7 @@ class AndPredicate(object):
   """
    common and predicate
   """
+
   def __init__(self, children=None):
     self.children = children or []
 
@@ -39,6 +40,7 @@ class OrPredicate(object):
   """
    common or predicate
   """
+
   def __init__(self, children=None):
     self.children = children or []
 
@@ -69,6 +71,7 @@ class Predicate(object):
   """
   helper predicate wrapper for having operator support
   """
+
   def __init__(self, fun):
     self.fun = fun
 

@@ -2,10 +2,11 @@
 """
  logger util method
 """
-from datetime import datetime
 import logging
 import pprint
 import sys
+from datetime import datetime
+
 from colorama import Fore, init
 
 # init colors for Powershell
@@ -16,6 +17,7 @@ class SlackLoggerLayer(object):
   """
    one stack element
   """
+
   def __init__(self, name):
     self.deleted = 0
     self.errors = 0
@@ -35,6 +37,7 @@ class SlackLogger(object):
   """
   helper logging class
   """
+
   def __init__(self, to_file=False, sleep_for=0):
     self._sleep_for = sleep_for
     self._log = logging.getLogger('slack-cleaner')

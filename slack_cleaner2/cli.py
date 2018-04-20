@@ -3,14 +3,16 @@
   deprecated cli mimicing old slack cleander
 """
 from colorama import Fore
-from .slack_cleaner2 import SlackCleaner
+
 from .predicates import match_user, match, is_name, and_, by_user, match_text, is_not_pinned, is_bot
+from .slack_cleaner2 import SlackCleaner
 
 
 def _show_infos(slack):
   """
   show generic information about this slack workspace
   """
+
   def _print_dict(cat, data):
     msg = Fore.GREEN + cat + ':' + Fore.RESET
     for k, v in data.items():
@@ -164,7 +166,7 @@ def _args():
                       help='Private group\'s name')
   parser.add_argument('--mpdirect',
                       help='Multiparty direct message\'s name, e.g., ' +
-                      'sherry,james,johndoe')
+                           'sherry,james,johndoe')
 
   # Conditions
   parser.add_argument('--user',
@@ -210,4 +212,5 @@ def main():
 
 if __name__ == "__main__":
   import sys
+
   sys.exit(main())  # pragma: no cover
