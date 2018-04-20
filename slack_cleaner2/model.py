@@ -96,10 +96,7 @@ class SlackChannel(object):
         # Prepare for next page query
         latest = msg['ts']
 
-        user = None
-        if 'user' in msg:
-          user = next((u for u in self.members if u.id == msg['user']), None)
-
+        user = _find_user(self.members, msg)
         # Delete user messages
         if msg['type'] == 'message':
           yield SlackMessage(msg, user, self, self._slack)
@@ -114,9 +111,7 @@ class SlackChannel(object):
     if not res['ok']:
       return
     for msg in res['messages']:
-      user = None
-      if 'user' in msg:
-        user = next((u for u in self.members if u.id == msg['user']), None)
+      user = _find_user(self.members, msg)
       # Delete user messages
       if msg['type'] == 'message':
         yield SlackMessage(msg, user, self, self._slack)
@@ -255,3 +250,13 @@ def _parse_time(time_str):
     return time.mktime(time.strptime(time_str, "%Y%m%d%H%M"))
   except ValueError:
     return None
+
+
+def _find_user(users, msg):
+  if 'user' not in msg:
+    return None
+  userid = msg['user']
+  for user in users:
+    if user.id == userid:
+      return user
+  return None
