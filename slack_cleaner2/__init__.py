@@ -5,3 +5,7 @@
 __author__ = """Samuel Gratzl"""
 __email__ = 'samuel-gratzl@gmx.at'
 __version__ = '0.1.0'
+
+from .slack_cleaner2 import SlackCleaneer
+from .predicates import and_, or_, is_not_pinned, is_bot, match, name, match_text, match_suer, is_member, by_user, by_users
+from .util import a_while_ago

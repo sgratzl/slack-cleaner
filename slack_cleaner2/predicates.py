@@ -21,6 +21,10 @@ class AndPredicate:
     return OrPredicate([self, other])
 
 
+def and_(predicates):
+  return AndPredicate(predicates)
+
+
 class OrPredicate:
   def __init__(self, c=None):
     self.c = c or []
@@ -39,6 +43,10 @@ class OrPredicate:
 
   def __and__(self, other):
     return AndPredicate([self, other])
+
+
+def or_(predicates):
+  return OrPredicate(predicates)
 
 
 class Predicate():

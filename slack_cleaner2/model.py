@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class SlackUser:
+class SlackUser(object):
   """
   internal model of a slack user
   """
@@ -48,7 +48,7 @@ class SlackUser:
         yield msg
 
 
-class SlackChannel:
+class SlackChannel(object):
   """
   internal model of a slack channel, group, mpim, im
   """
@@ -132,7 +132,7 @@ class SlackDirectMessage(SlackChannel):
     self.user = user
 
 
-class SlackMessage:
+class SlackMessage(object):
   """
   internal model of a slack message
   """
@@ -167,7 +167,7 @@ class SlackMessage:
     return self.__str__()
 
 
-class SlackFile:
+class SlackFile(object):
   """
   internal representation of a slack file
   """
