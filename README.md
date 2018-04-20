@@ -1,6 +1,6 @@
 # slack_cleaner2
 
-[![License: MIT][mit-image]][mit-url] [![CircleCI][ci-image]][ci-url] [![PyPi][pypi-image]][pypi-url] [Read the Docs][docs-image]][docs-url]
+[![License: MIT][mit-image]][mit-url] [![CircleCI][ci-image]][ci-url] [![PyPi][pypi-image]][pypi-url] [![Read the Docs][docs-image]][docs-url]
 
 Bulk delete messages and files on Slack.
 
@@ -17,7 +17,7 @@ latest version
 pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
 ```
 
-#ä Usage
+## Usage
 
 In contrast to the original version this version is a pure python package only that allows for easy scripting instead of a vast amount of different command line arguments. 
 
