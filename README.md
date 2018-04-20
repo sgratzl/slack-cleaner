@@ -78,5 +78,5 @@ InsecurePlatformWarning: A true SSLContext object is not available.
 [ci-url]: https://circleci.com/gh/sgratzl/slack_cleaner2
 [pypi-image]: https://pypip.in/version/slack_cleaner2/badge.svg
 [pypi-url]: https://pypi.python.org/pypi/slack_cleaner2/
-[docs-image]: https://readthedocs.org/projects/slack_cleaner2/badge/
-[docs-url]: https://readthedocs.org/projects/slack_cleaner2
+[docs-image]: https://readthedocs.org/projects/slack-cleaner2/badge/?version=latest
+[docs-url]: https://slack-cleaner2.readthedocs.io/en/latest/?badge=latest
