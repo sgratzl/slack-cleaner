@@ -84,7 +84,7 @@ class SlackUser(object):
     :param types: see slack api doc
     :type types: str
     :return: generator of SlackFile objects
-    :rtype: SlackFile*
+    :rtype: SlackFile
     """
     return SlackFile.list(self._slack, user=self.id, after=after, before=before, types=types)
 
@@ -97,7 +97,7 @@ class SlackUser(object):
     :param before: limit to entries before´this timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
-    :rtype: SlackMessage*
+    :rtype: SlackMessage
     """
     from .predicates import is_member, by_user
     by_me = by_user(self)
@@ -164,7 +164,7 @@ class SlackChannel(object):
     :param before: limit to entries before´this timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
-    :rtype: SlackMessage*
+    :rtype: SlackMessage
     """
     after = _parse_time(after)
     before = _parse_time(before)
@@ -198,7 +198,7 @@ class SlackChannel(object):
     :param base_msg: message instance to find replies to
     :type base_msg: SlackMessage
     :return: generator of SlackMessage replies
-    :rtype: SlackMessage*
+    :rtype: SlackMessage
     """
     res = self.api.replies(self.id, base_msg.ts).body
     if not res['ok']:
@@ -220,7 +220,7 @@ class SlackChannel(object):
     :param types: see slack api docs
     :type types: str
     :return: generator of SlackFile objects
-    :rtype: SlackFile*
+    :rtype: SlackFile
     """
     return SlackFile.list(self._slack, channel=self.id, after=after, before=before, types=types)
 
@@ -331,7 +331,7 @@ class SlackMessage(object):
     list all replies of this message
 
     :return: generator of SlackMessage objects
-    :rtype: SlackMessage*
+    :rtype: SlackMessage
     """
     return self._channel.replies_to(self)
 
@@ -404,7 +404,7 @@ class SlackFile(object):
     :param types: see slack api
     :type types: str
     :return: generator of SlackFile objects
-    :rtype: SlackFile*
+    :rtype: SlackFile
     """
 
     after = _parse_time(after)
