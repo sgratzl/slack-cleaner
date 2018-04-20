@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 """slack_cleaner2 is a simple api for deleting slack messages"""
 
 __author__ = """Samuel Gratzl"""

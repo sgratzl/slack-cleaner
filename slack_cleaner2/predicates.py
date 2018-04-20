@@ -31,7 +31,12 @@ class AndPredicate(object):
 
 def and_(predicates):
   """
-  combime multiple predicates using and
+  combines multiple predicates using a logical and
+
+  :param predicates: the predicates to combine
+  :type predicates: [Predicate]
+  :return a new predicate
+  :rtype AndPredicate
   """
   return AndPredicate(predicates)
 
@@ -62,7 +67,12 @@ class OrPredicate(object):
 
 def or_(predicates):
   """
-  combime multiple predicates using or
+  combines multiple predicates using a logical or
+
+  :param predicates: the predicates to combine
+  :type predicates: [Predicate]
+  :return a new predicate
+  :rtype OrPredicate
   """
   return OrPredicate(predicates)
 
@@ -73,6 +83,9 @@ class Predicate(object):
   """
 
   def __init__(self, fun):
+    """
+    :param fun: function to evaluate
+    """
     self.fun = fun
 
   def __call__(self, obj):
@@ -94,7 +107,7 @@ def is_not_pinned():
 
 def is_bot():
   """
-  prediate for filtering messages or files created by a bot
+  predicate for filtering messages or files created by a bot
   """
   return Predicate(lambda msg_or_user: msg_or_user.bot)
 
@@ -102,6 +115,13 @@ def is_bot():
 def match(pattern, attr='name'):
   """
   predicate for filtering channels which names match the given regex
+
+  :param pattern: regex pattern to match
+  :type pattern: str
+  :param attr: attribute to check of the object
+  :type attr: str
+  :return Predicate
+  :rtype Predicate
   """
   import re
   regex = re.compile('^' + pattern + '$', re.I)
@@ -112,6 +132,11 @@ def match(pattern, attr='name'):
 def is_name(channel_name):
   """
   predicate for filtering channels with the given name
+
+  :param name: string to match
+  :type name: str
+  :return Predicate
+  :rtype Predicate
   """
   return Predicate(lambda channel: channel.name == channel_name)
 
@@ -119,6 +144,11 @@ def is_name(channel_name):
 def match_text(pattern):
   """
   predicate for filtering messages which text matches the given regex
+
+  :param pattern: regex to match
+  :type pattern: str
+  :return Predicate
+  :rtype Predicate
   """
   return match(pattern, 'text')
 
@@ -126,6 +156,11 @@ def match_text(pattern):
 def match_user(pattern):
   """
   predicate for filtering users which match the given regex (id, name, display_name, email, real_name)
+
+  :param pattern: regex to match
+  :type pattern: str
+  :return Predicate
+  :rtype Predicate
   """
   import re
   regex = re.compile('^' + pattern + '$', re.I)
@@ -136,6 +171,11 @@ def match_user(pattern):
 def is_member(user):
   """
   predicate for filtering channels in which the user is a member of
+
+  :param user: the user to check
+  :type user: SlackUser
+  :return Predicate
+  :rtype Predicate
   """
   return Predicate(lambda channel: user in channel.members)
 
@@ -143,6 +183,11 @@ def is_member(user):
 def by_user(user):
   """
   predicate for filtering messages or files written by the given user
+
+  :param users: the users to check
+  :type user: [SlackUser]
+  :return Predicate
+  :rtype Predicate
   """
   return Predicate(lambda msg_or_file: msg_or_file.user == user)
 
@@ -150,6 +195,11 @@ def by_user(user):
 def by_users(users):
   """
   predicate for filtering messages or files written by one of the given users
+
+  :param users: the users to check
+  :type user: [SlackUser]
+  :return Predicate
+  :rtype Predicate
   """
   users = set(users)
   return Predicate(lambda msg_or_file: msg_or_file.user in users)

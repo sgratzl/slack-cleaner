@@ -9,18 +9,55 @@ class SlackUser(object):
   internal model of a slack user
   """
 
-  def __init__(self, member, slack):
-    self.id = member['id']
+  """
+  user id
+  """
+  id = None  # type: str
+  """
+  user name
+  """
+  name = None # tyoe: str
+  """
+  user real name
+  """
+  real_name = None # tpye: str
+  """
+  user display name
+  """
+  display_name = None # type: str
+  """
+  user email address
+  """
+  email = None  # type: str
+  """
+  is it a bot user
+  """
+  is_bot = False  # type: bool
+  """
+  is it an app user
+  """
+  is_app_user = False  # type: bool
+  """
+  is it a bot or app user
+  """
+  bot = False  # type: bool
+
+  def __init__(self, entry, slack):
     """
+    :param entry: json dict entry as returned by slack api
+    :type entry: dict
+    :param slack: slack cleaner instance
+    :type slack: SlackCleaner
     """
+    self.id = entry['id']
     self._slack = slack
-    self.name = member['name']
-    self.real_name = member['profile'].get('real_name')
-    self.display_name = member['profile']['display_name']
-    self.email = member['profile'].get('email')
-    self._entry = member
-    self.is_bot = member['is_bot']
-    self.is_app_user = member['is_app_user']
+    self.name = entry['name']
+    self.real_name = entry['profile'].get('real_name')
+    self.display_name = entry['profile']['display_name']
+    self.email = entry['profile'].get('email')
+    self._entry = entry
+    self.is_bot = entry['is_bot']
+    self.is_app_user = entry['is_app_user']
     self.bot = self.is_bot or self.is_app_user
 
   def __str__(self):
@@ -32,19 +69,28 @@ class SlackUser(object):
   def files(self, after=None, before=None, types=None):
     """
     list all files of the this user
-    :param after: from
-    :param before: to
+
+    :param after: limit to entries after´this timestamp
+    :type after: int,str,time
+    :param before: limit to entries before´this timestamp
+    :type before: int,str,time
     :param types: see slack api doc
-    :return:
+    :type types: str
+    :return: generator of SlackFile objects
+    :rtype: SlackFile*
     """
     return SlackFile.list(self._slack, user=self.id, after=after, before=before, types=types)
 
   def msgs(self, after=None, before=None):
     """
     list all messages of the this user
-    :param after: from
-    :param before: to
-    :return:
+
+    :param after: limit to entries after´this timestamp
+    :type after: int,str,time
+    :param before: limit to entries before´this timestamp
+    :type before: int,str,time
+    :return: generator of SlackMessage objects
+    :rtype: SlackMessage*
     """
     from .predicates import is_member, by_user
     by_me = by_user(self)
@@ -58,7 +104,34 @@ class SlackChannel(object):
   internal model of a slack channel, group, mpim, im
   """
 
+  """
+  channel id
+  """
+  id = None  # type: str
+  """
+  channel name
+  """
+  name = None  # type: str
+  """
+  list of members
+  """
+  members = None  # type: [SlackUser]
+  """
+  Slacker sub api
+  """
+  api = None
+
   def __init__(self, entry, members, api, slack):
+    """
+    :param entry: json dict entry as returned by slack api
+    :type entry: dict
+    :param members: list of members
+    :type members: [SlackUser]
+    :param api: Slacker sub api
+    :param slack: slack cleaner instance
+    :type slack: SlackCleaner
+    """
+
     self.id = entry['id']
     self.name = entry.get('name', self.id)
     self.members = members
@@ -75,9 +148,13 @@ class SlackChannel(object):
   def msgs(self, after=None, before=None):
     """
     retrieve the msgs of all messages as a generator
-    :param after: from
-    :param before: to
-    :return: generator of SlackMessage
+
+    :param after: limit to entries after´this timestamp
+    :type after: int,str,time
+    :param before: limit to entries before´this timestamp
+    :type before: int,str,time
+    :return: generator of SlackMessage objects
+    :rtype: SlackMessage*
     """
     after = _parse_time(after)
     before = _parse_time(before)
@@ -108,7 +185,9 @@ class SlackChannel(object):
     """
     returns the replies to a given SlackMessage instance
     :param base_msg: message instance to find replies to
-    :return:
+    :type base_msg: SlackMessage
+    :return: generator of SlackMessage replies
+    :rtype: SlackMessage*
     """
     res = self.api.replies(self.id, base_msg.ts).body
     if not res['ok']:
@@ -122,6 +201,14 @@ class SlackChannel(object):
   def files(self, after=None, before=None, types=None):
     """
     list all files of this channel
+    :param after: limit to entries after´this timestamp
+    :type after: int,str,time
+    :param before: limit to entries before´this timestamp
+    :type before: int,str,time
+    :param types: see slack api docs
+    :type types: str
+    :return generator of SlackFile objects
+    :rtype: SlackFile*
     """
     return SlackFile.list(self._slack, channel=self.id, after=after, before=before, types=types)
 
@@ -130,8 +217,22 @@ class SlackDirectMessage(SlackChannel):
   """
   internal model of a slack direct message channel
   """
+  """
+  user spoken to
+  """
+  user = None  # type: SlackUser
 
   def __init__(self, entry, user, api, slack):
+    """
+    :param entry: json dict entry as returned by slack api
+    :type entry: dict
+    :param user: user talking to
+    :type user: SlackUser
+    :param api: Slacker sub api
+    :param slack: slack cleaner instance
+    :type slack: SlackCleaner
+    """
+
     super(SlackDirectMessage, self).__init__(entry, [user], api, slack)
     self.name = user.name
     self.user = user
@@ -141,8 +242,43 @@ class SlackMessage(object):
   """
   internal model of a slack message
   """
+  """
+  message timestamp
+  """
+  ts = None  # type: int
+  """
+  message text
+  """
+  text = None  # type: str
+  """
+  slacker sub api
+  """
+  api = None
+  """
+  user sending the messsage
+  """
+  user = None  # type: SlackUser
+  """
+  written by a bot
+  """
+  bot = False  # type: bool
+  """
+  is the message pinned
+  """
+  pinned_to = False  # type: bool
 
   def __init__(self, entry, user, channel, slack):
+    """
+    :param entry: json dict entry as returned by slack api
+    :type entry: dict
+    :param user: user wrote this message
+    :type user: SlackUser
+    :param channel: channels this message is written in
+    :type channel: SlackChannel
+    :param slack: slack cleaner instance
+    :type slack: SlackCleaner
+    """
+
     self.ts = entry['ts']
     self.text = entry['text']
     self._channel = channel
@@ -156,6 +292,11 @@ class SlackMessage(object):
   def delete(self, as_user=False):
     """
     deletes this message
+
+    :param as_user: trigger the delete operation as the user identified by the token
+    :type as_user: bool
+    :return None if successful else error
+    :rtype: Exception
     """
     try:
       # No response is a good response
@@ -169,8 +310,10 @@ class SlackMessage(object):
   def replies(self):
     """
     list all replies of this message
+    :return generator of SlackMessage objects
+    :rtype SlackMessage*
     """
-    return self._channel.replies_of(self)
+    return self._channel.replies_to(self)
 
   def __str__(self):
     return u'{c}:{t}'.format(c=self._channel.name, t=self.ts)
@@ -184,10 +327,37 @@ class SlackFile(object):
   internal representation of a slack file
   """
 
+  """
+  file id
+  """
+  id = None  # type: str
+  """
+  file name aka title
+  """
+  name = None  # type: str
+  """
+  slacker sub api
+  """
+  api = None
+  """
+  user created this file
+  """
+  user = None  # type: SlackUser
+  """
+  is the message pinned
+  """
+  pinned_to = False  # type: bool
+
   def __init__(self, entry, user, slack):
+    """
+    :param entry: json dict entry as returned by slack api
+    :type entry: dict
+    :param user: user created this file
+    :param slack: slack cleaner instance
+    :type slack: SlackCleaner
+    """
     self.id = entry['id']
     self.name = entry['title']
-    self.text = self.name
     self.user = user
     self.pinned_to = entry.get('pinned_to', False)
     self._entry = entry
@@ -198,9 +368,26 @@ class SlackFile(object):
   def list(slack, user=None, after=None, before=None, types=None, channel=None):
     """
     list all given files
+    :param user: user id to limit search
+    :type user: str,SlackUser
+    :param after: limit to entries after´this timestamp
+    :type after: int,str,time
+    :param before: limit to entries before´this timestamp
+    :type before: int,str,time
+    :param channel: channel to limit search
+    :type channel: str,SlackChannel
+    :param types: see slack api
+    :type types: str
+    :return generator of SlackFile objects
+    :rtype SlackFile*
     """
+
     after = _parse_time(after)
     before = _parse_time(before)
+    if isinstance(user, SlackUser):
+      user = user.id
+    if isinstance(channel, SlackChannel):
+      channel = channel.id
     page = 1
     has_more = True
     api = slack.api.files
@@ -231,7 +418,9 @@ class SlackFile(object):
   def delete(self):
     """
     delete the file itself
-    :return:  None if no error occurred
+
+    :return:  None if successful else exception
+    :rtype Exception
     """
     try:
       # No response is a good response so no error
@@ -252,8 +441,8 @@ def _parse_time(time_str):
     return time_str
   try:
     if len(time_str) == 8:
-      return time.mktime(time.strptime(time_str, "%Y%m%d"))
-    return time.mktime(time.strptime(time_str, "%Y%m%d%H%M"))
+      return time.mktime(time.strptime(time_str, '%Y%m%d'))
+    return time.mktime(time.strptime(time_str, '%Y%m%d%H%M'))
   except ValueError:
     return None
 
