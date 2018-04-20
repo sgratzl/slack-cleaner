@@ -11,6 +11,8 @@ class SlackUser(object):
 
   def __init__(self, member, slack):
     self.id = member['id']
+    """
+    """
     self._slack = slack
     self.name = member['name']
     self.real_name = member['profile'].get('real_name')

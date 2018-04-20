@@ -1,2 +1,4 @@
 .. automodule:: slack_cleaner2
-  :members:
+.. automodule:: slack_cleaner2.model
+.. automodule:: slack_cleaner2.logger
+
