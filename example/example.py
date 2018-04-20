@@ -1,18 +1,20 @@
-from slack_cleaner import *
 import os
+from itertools import ifilter
+from slack_cleaner2 import *
 
-s = SlackCleaner(os.environ['TOKEN'], 1, false)
+
+s = SlackCleaner(os.environ['TOKEN'], 1)
 
 with s.log.group('clear bot channels'):
-  for msg in s.msgs(filter(match('.*-bots'), s.conversations)):
+  for msg in s.msgs(ifilter(match('.*-bots'), s.conversations)):
     msg.delete()
 
-with s.log.group('delete older than 3 months'):
-  for msg in s.msgs(filter(is_not_pinned(), s.conversations), before=a_while_ago(months=3)):
-    msg.delete()
+#with s.log.group('delete older than 3 months'):
+#  for msg in ifilter(is_not_pinned(), s.msgs(before=a_while_ago(months=3))):
+#    msg.delete()
 
-with s.log.group('delete ims older than 1 month'):
-  for msg in s.msgs(filter(is_not_pinned(), s.ims), before=a_while_ago(months=1)):
-    msg.delete()
+#with s.log.group('delete ims older than 1 month'):
+#  for msg in ifilter(is_not_pinned(), s.msgs(s.ims, before=a_while_ago(months=1))):
+#    msg.delete()
 
 s.log.summary()
