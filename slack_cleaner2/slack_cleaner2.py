@@ -5,7 +5,6 @@
 from requests.sessions import Session
 from slacker import Slacker
 
-from slack_cleaner2.logger import SlackLogger
 from .logger import SlackLogger
 from .model import SlackUser, SlackChannel, SlackDirectMessage, SlackFile
 
@@ -22,35 +21,35 @@ class SlackCleaner(object):
   """
   attributes for the underlying slacker instance
   """
-  api = None # type: Slacker
+  api = None  # type: Slacker
   """
   list of known users
   """
-  users = None # type: [SlackUser]
+  users = None  # type: [SlackUser]
   """
   dictionary lookup from user id to SlackUser object
   """
-  user = None # type: {str:SlackUser}
+  user = None  # type: {str:SlackUser}
   """
   list of channels
   """
-  channels = None # type: [SlackChannel]
+  channels = None  # type: [SlackChannel]
   """
   list of groups
   """
-  groups = None # type: [SlackChannel]
+  groups = None  # type: [SlackChannel]
   """
   list of multi person instant message
   """
-  mpims = None # type: [SlackChannel]
+  mpims = None  # type: [SlackChannel]
   """
   list of instant messages = direct messags
   """
-  ims = None # type: [SlackDirectMessage]
+  ims = None  # type: [SlackDirectMessage]
   """
   list of channel+group+mpims+ims
   """
-  conversations = None # type: [SlackChannel]
+  conversations = None  # type: [SlackChannel]
 
   def __init__(self, token, sleep_for=0, log_to_file=False):
     """
@@ -117,7 +116,7 @@ class SlackCleaner(object):
     :param channel: limit to a certain channel id
     :type channel: str
     :return: generator of SlackFile objects
-    :rtype SlackFile
+    :rtype: SlackFile
     """
     return SlackFile.list(self, user=user, after=after, before=before, types=types, channel=channel)
 
@@ -132,7 +131,7 @@ class SlackCleaner(object):
     :param before: limit to entries before´this timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
-    :rtype SlackMessage
+    :rtype: SlackMessage
     """
     if not channels:
       channels = self.conversations

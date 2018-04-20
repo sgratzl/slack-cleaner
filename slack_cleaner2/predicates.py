@@ -35,8 +35,8 @@ def and_(predicates):
 
   :param predicates: the predicates to combine
   :type predicates: [Predicate]
-  :return a new predicate
-  :rtype AndPredicate
+  :return: a new predicate
+  :rtype: AndPredicate
   """
   return AndPredicate(predicates)
 
@@ -71,8 +71,8 @@ def or_(predicates):
 
   :param predicates: the predicates to combine
   :type predicates: [Predicate]
-  :return a new predicate
-  :rtype OrPredicate
+  :return: a new predicate
+  :rtype: OrPredicate
   """
   return OrPredicate(predicates)
 
@@ -120,8 +120,8 @@ def match(pattern, attr='name'):
   :type pattern: str
   :param attr: attribute to check of the object
   :type attr: str
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   import re
   regex = re.compile('^' + pattern + '$', re.I)
@@ -135,8 +135,8 @@ def is_name(channel_name):
 
   :param name: string to match
   :type name: str
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   return Predicate(lambda channel: channel.name == channel_name)
 
@@ -147,8 +147,8 @@ def match_text(pattern):
 
   :param pattern: regex to match
   :type pattern: str
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   return match(pattern, 'text')
 
@@ -159,8 +159,8 @@ def match_user(pattern):
 
   :param pattern: regex to match
   :type pattern: str
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   import re
   regex = re.compile('^' + pattern + '$', re.I)
@@ -174,8 +174,8 @@ def is_member(user):
 
   :param user: the user to check
   :type user: SlackUser
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   return Predicate(lambda channel: user in channel.members)
 
@@ -186,8 +186,8 @@ def by_user(user):
 
   :param users: the users to check
   :type user: [SlackUser]
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   return Predicate(lambda msg_or_file: msg_or_file.user == user)
 
@@ -198,8 +198,8 @@ def by_users(users):
 
   :param users: the users to check
   :type user: [SlackUser]
-  :return Predicate
-  :rtype Predicate
+  :return: Predicate
+  :rtype: Predicate
   """
   users = set(users)
   return Predicate(lambda msg_or_file: msg_or_file.user in users)

@@ -13,30 +13,37 @@ class SlackUser(object):
   user id
   """
   id = None  # type: str
+
   """
   user name
   """
-  name = None # tyoe: str
+  name = None  # tyoe: str
+
   """
   user real name
   """
-  real_name = None # tpye: str
+  real_name = None  # tpye: str
+
   """
   user display name
   """
-  display_name = None # type: str
+  display_name = None  # type: str
+
   """
   user email address
   """
   email = None  # type: str
+
   """
   is it a bot user
   """
   is_bot = False  # type: bool
+
   """
   is it an app user
   """
   is_app_user = False  # type: bool
+
   """
   is it a bot or app user
   """
@@ -108,14 +115,17 @@ class SlackChannel(object):
   channel id
   """
   id = None  # type: str
+
   """
   channel name
   """
   name = None  # type: str
+
   """
   list of members
   """
   members = None  # type: [SlackUser]
+
   """
   Slacker sub api
   """
@@ -207,7 +217,7 @@ class SlackChannel(object):
     :type before: int,str,time
     :param types: see slack api docs
     :type types: str
-    :return generator of SlackFile objects
+    :return: generator of SlackFile objects
     :rtype: SlackFile*
     """
     return SlackFile.list(self._slack, channel=self.id, after=after, before=before, types=types)
@@ -217,6 +227,7 @@ class SlackDirectMessage(SlackChannel):
   """
   internal model of a slack direct message channel
   """
+
   """
   user spoken to
   """
@@ -242,26 +253,32 @@ class SlackMessage(object):
   """
   internal model of a slack message
   """
+
   """
   message timestamp
   """
   ts = None  # type: int
+
   """
   message text
   """
   text = None  # type: str
+
   """
   slacker sub api
   """
   api = None
+
   """
   user sending the messsage
   """
   user = None  # type: SlackUser
+
   """
   written by a bot
   """
   bot = False  # type: bool
+
   """
   is the message pinned
   """
@@ -295,7 +312,7 @@ class SlackMessage(object):
 
     :param as_user: trigger the delete operation as the user identified by the token
     :type as_user: bool
-    :return None if successful else error
+    :return: None if successful else error
     :rtype: Exception
     """
     try:
@@ -310,8 +327,8 @@ class SlackMessage(object):
   def replies(self):
     """
     list all replies of this message
-    :return generator of SlackMessage objects
-    :rtype SlackMessage*
+    :return: generator of SlackMessage objects
+    :rtype: SlackMessage*
     """
     return self._channel.replies_to(self)
 
@@ -331,18 +348,22 @@ class SlackFile(object):
   file id
   """
   id = None  # type: str
+
   """
   file name aka title
   """
   name = None  # type: str
+
   """
   slacker sub api
   """
   api = None
+
   """
   user created this file
   """
   user = None  # type: SlackUser
+
   """
   is the message pinned
   """
@@ -378,8 +399,8 @@ class SlackFile(object):
     :type channel: str,SlackChannel
     :param types: see slack api
     :type types: str
-    :return generator of SlackFile objects
-    :rtype SlackFile*
+    :return: generator of SlackFile objects
+    :rtype: SlackFile*
     """
 
     after = _parse_time(after)
@@ -420,7 +441,7 @@ class SlackFile(object):
     delete the file itself
 
     :return:  None if successful else exception
-    :rtype Exception
+    :rtype: Exception
     """
     try:
       # No response is a good response so no error
