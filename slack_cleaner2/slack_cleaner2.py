@@ -14,42 +14,42 @@ class SlackCleaner(object):
   base class for cleaning up slack providing access to channels and users
   """
 
+  log = None  # type: SlackLogger
   """
   logger
   """
-  log = None  # type: SlackLogger
+  api = None  # type: Slacker
   """
   attributes for the underlying slacker instance
   """
-  api = None  # type: Slacker
+  users = None  # type: [SlackUser]
   """
   list of known users
   """
-  users = None  # type: [SlackUser]
+  user = None  # type: {str:SlackUser}
   """
   dictionary lookup from user id to SlackUser object
   """
-  user = None  # type: {str:SlackUser}
+  channels = None  # type: [SlackChannel]
   """
   list of channels
   """
-  channels = None  # type: [SlackChannel]
+  groups = None  # type: [SlackChannel]
   """
   list of groups
   """
-  groups = None  # type: [SlackChannel]
+  mpims = None  # type: [SlackChannel]
   """
   list of multi person instant message
   """
-  mpims = None  # type: [SlackChannel]
+  ims = None  # type: [SlackDirectMessage]
   """
   list of instant messages = direct messags
   """
-  ims = None  # type: [SlackDirectMessage]
+  conversations = None  # type: [SlackChannel]
   """
   list of channel+group+mpims+ims
   """
-  conversations = None  # type: [SlackChannel]
 
   def __init__(self, token, sleep_for=0, log_to_file=False):
     """

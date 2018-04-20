@@ -9,45 +9,45 @@ class SlackUser(object):
   internal model of a slack user
   """
 
+  id = None  # type: str
   """
   user id
   """
-  id = None  # type: str
 
+  name = None  # tyoe: str
   """
   user name
   """
-  name = None  # tyoe: str
 
+  real_name = None  # tpye: str
   """
   user real name
   """
-  real_name = None  # tpye: str
 
+  display_name = None  # type: str
   """
   user display name
   """
-  display_name = None  # type: str
 
+  email = None  # type: str
   """
   user email address
   """
-  email = None  # type: str
 
+  is_bot = False  # type: bool
   """
   is it a bot user
   """
-  is_bot = False  # type: bool
 
+  is_app_user = False  # type: bool
   """
   is it an app user
   """
-  is_app_user = False  # type: bool
 
+  bot = False  # type: bool
   """
   is it a bot or app user
   """
-  bot = False  # type: bool
 
   def __init__(self, entry, slack):
     """
@@ -111,25 +111,25 @@ class SlackChannel(object):
   internal model of a slack channel, group, mpim, im
   """
 
+  id = None  # type: str
   """
   channel id
   """
-  id = None  # type: str
 
+  name = None  # type: str
   """
   channel name
   """
-  name = None  # type: str
 
+  members = None  # type: [SlackUser]
   """
   list of members
   """
-  members = None  # type: [SlackUser]
 
+  api = None
   """
   Slacker sub api
   """
-  api = None
 
   def __init__(self, entry, members, api, slack):
     """
@@ -194,6 +194,7 @@ class SlackChannel(object):
   def replies_to(self, base_msg):
     """
     returns the replies to a given SlackMessage instance
+
     :param base_msg: message instance to find replies to
     :type base_msg: SlackMessage
     :return: generator of SlackMessage replies
@@ -211,6 +212,7 @@ class SlackChannel(object):
   def files(self, after=None, before=None, types=None):
     """
     list all files of this channel
+
     :param after: limit to entries after´this timestamp
     :type after: int,str,time
     :param before: limit to entries before´this timestamp
@@ -228,10 +230,10 @@ class SlackDirectMessage(SlackChannel):
   internal model of a slack direct message channel
   """
 
+  user = None  # type: SlackUser
   """
   user spoken to
   """
-  user = None  # type: SlackUser
 
   def __init__(self, entry, user, api, slack):
     """
@@ -254,35 +256,35 @@ class SlackMessage(object):
   internal model of a slack message
   """
 
+  ts = None  # type: int
   """
   message timestamp
   """
-  ts = None  # type: int
 
+  text = None  # type: str
   """
   message text
   """
-  text = None  # type: str
 
+  api = None
   """
   slacker sub api
   """
-  api = None
 
+  user = None  # type: SlackUser
   """
   user sending the messsage
   """
-  user = None  # type: SlackUser
 
+  bot = False  # type: bool
   """
   written by a bot
   """
-  bot = False  # type: bool
 
+  pinned_to = False  # type: bool
   """
   is the message pinned
   """
-  pinned_to = False  # type: bool
 
   def __init__(self, entry, user, channel, slack):
     """
@@ -327,6 +329,7 @@ class SlackMessage(object):
   def replies(self):
     """
     list all replies of this message
+
     :return: generator of SlackMessage objects
     :rtype: SlackMessage*
     """
@@ -344,30 +347,30 @@ class SlackFile(object):
   internal representation of a slack file
   """
 
+  id = None  # type: str
   """
   file id
   """
-  id = None  # type: str
 
+  name = None  # type: str
   """
   file name aka title
   """
-  name = None  # type: str
 
+  api = None
   """
   slacker sub api
   """
-  api = None
 
+  user = None  # type: SlackUser
   """
   user created this file
   """
-  user = None  # type: SlackUser
 
+  pinned_to = False  # type: bool
   """
   is the message pinned
   """
-  pinned_to = False  # type: bool
 
   def __init__(self, entry, user, slack):
     """
@@ -389,6 +392,7 @@ class SlackFile(object):
   def list(slack, user=None, after=None, before=None, types=None, channel=None):
     """
     list all given files
+
     :param user: user id to limit search
     :type user: str,SlackUser
     :param after: limit to entries after´this timestamp
