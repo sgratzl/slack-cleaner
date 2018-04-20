@@ -19,7 +19,7 @@ pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
 
 ## Usage
 
-In contrast to the original version this version is a pure python package only that allows for easy scripting instead of a vast amount of different command line arguments. 
+In contrast to the original version (https://github.com/kfei/slack-cleaner) this version is a focusing on pure python package that allows for easy scripting instead of a vast amount of different command line arguments. 
 
 basic usage
 
@@ -32,6 +32,7 @@ s.users
 # list of all kind of channels
 s.conversations
 
+# delete all messages in -bozs channels
 for msg in s.msgs(filter(match('.*-bots'), s.conversations)):
   msg.delete()
 ```
