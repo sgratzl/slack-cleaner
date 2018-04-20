@@ -35,6 +35,7 @@ import slack_cleaner2
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.viewcode']
 autodoc_default_flags = ['members', 'inherited-members', 'show-inheritance']
 autoclass_content = 'both'
+autodoc_member_order = 'bysource'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
