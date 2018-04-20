@@ -3,6 +3,7 @@
   deprecated cli mimicing old slack cleander
 """
 from colorama import Fore
+from itertools import ifilter
 
 from .predicates import match_user, match, is_name, and_, by_user, match_text, is_not_pinned, is_bot
 from .slack_cleaner2 import SlackCleaner
@@ -33,7 +34,7 @@ def _resolve_user(slack, args):
   """
   if args.user == '*':
     return None
-  return next(filter(match_user(args.user), slack.users))
+  return next(ifilter(match_user(args.user), slack.users))
 
 
 def _channels(slack, args):
@@ -45,13 +46,13 @@ def _channels(slack, args):
   filter_f = match if args.regex else is_name
 
   if args.channel:
-    channels.extend(filter(filter_f(args.channel), slack.channels))
+    channels.extend(ifilter(filter_f(args.channel), slack.channels))
   if args.group:
-    channels.extend(filter(filter_f(args.group), slack.groups))
+    channels.extend(ifilter(filter_f(args.group), slack.groups))
   if args.direct:
-    channels.extend(filter(filter_f(args.direct), slack.ims))
+    channels.extend(ifilter(filter_f(args.direct), slack.ims))
   if args.mpdirect:
-    channels.extend(filter(filter_f(args.mpdirect), slack.mpim))
+    channels.extend(ifilter(filter_f(args.mpdirect), slack.mpim))
 
   return channels
 
@@ -74,7 +75,7 @@ def _delete_messages(slack, args):
   if args.bot:
     pred.append(is_bot)
   if args.botname:
-    pred.append(by_user(next(filter(match_user(args.botname), slack.users))))
+    pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
 
   pred = and_(pred)
   total = 0
@@ -108,7 +109,7 @@ def _delete_files(slack, args):
   if args.bot:
     pred.append(is_bot)
   if args.botname:
-    pred.append(by_user(next(filter(match_user(args.botname), slack.users))))
+    pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
 
   pred = and_(pred)
   total = 0
