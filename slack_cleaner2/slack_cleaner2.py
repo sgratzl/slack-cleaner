@@ -57,30 +57,30 @@ class SlackCleaner(object):
     # all different types with a similar interface
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
-  def files(self, user=None, ts_from=None, ts_to=None, types=None, channel=None):
+  def files(self, user=None, after=None, before=None, types=None, channel=None):
     """
     list all known slack files for the given parameter as a generator
     :param user: limit to given user id
-    :param ts_from: from
-    :param ts_to: to
+    :param after: from
+    :param before: to
     :param types: see types in slack api, default 'all'
     :param channel: limit to a certain channel id
     :return: generator of SlackFile objects
     """
-    return SlackFile.list(self, user=user, ts_from=ts_from, ts_to=ts_to, types=types, channel=channel)
+    return SlackFile.list(self, user=user, after=after, before=before, types=types, channel=channel)
 
-  def msgs(self, channels=None, ts_from=None, ts_to=None):
+  def msgs(self, channels=None, after=None, before=None):
     """
     list all known slack messages for the given parameter as a generator
     :param channels: limit to given channels default all conversations
-    :param ts_from: from
-    :param ts_to: to
+    :param after: from
+    :param before: to
     :return: generator of SlackMessage objects
     """
     if not channels:
       channels = self.conversations
     for channel in channels:
-      for msg in channel.msgs(ts_from=ts_from, ts_to=ts_to):
+      for msg in channel.msgs(after=after, before=before):
         yield msg
 
 

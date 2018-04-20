@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+ model module for absracting channels, messages, and files
+"""
 
 
 class SlackUser(object):
@@ -24,26 +27,26 @@ class SlackUser(object):
   def __repr__(self):
     return self.__str__()
 
-  def files(self, ts_from=None, ts_to=None, types=None):
+  def files(self, after=None, before=None, types=None):
     """
     list all files of the this user
-    :param ts_from: from
-    :param ts_to: to
+    :param after: from
+    :param before: to
     :param types: see slack api doc
     :return:
     """
-    return SlackFile.list(self._slack, user=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
+    return SlackFile.list(self._slack, user=self.id, after=after, before=before, types=types)
 
-  def msgs(self, ts_from=None, ts_to=None):
+  def msgs(self, after=None, before=None):
     """
     list all messages of the this user
-    :param ts_from: from
-    :param ts_to: to
+    :param after: from
+    :param before: to
     :return:
     """
     from .predicates import is_member, by_user
     by_me = by_user(self)
-    for msg in self._slack.msgs(filter(is_member(self), self._slack.conversations), ts_from=ts_from, ts_to=ts_to):
+    for msg in self._slack.msgs(filter(is_member(self), self._slack.conversations), after=after, before=before):
       if by_me(msg):
         yield msg
 
@@ -66,18 +69,18 @@ class SlackChannel(object):
   def __repr__(self):
     return self.__str__()
 
-  def msgs(self, ts_from=None, ts_to=None):
+  def msgs(self, after=None, before=None):
     """
     retrieve the msgs of all messages as a generator
-    :param ts_from: from
-    :param ts_to: to
+    :param after: from
+    :param before: to
     :return: generator of SlackMessage
     """
-    ts_from = _parse_time(ts_from)
-    ts_to = _parse_time(ts_to)
-    self._slack.log.debug('list msgs of %s (ts_from=%s, ts_to=%s)', self, ts_from, ts_to)
-    latest = ts_to
-    oldest = ts_from
+    after = _parse_time(after)
+    before = _parse_time(before)
+    self._slack.log.debug('list msgs of %s (after=%s, before=%s)', self, after, before)
+    latest = before
+    oldest = after
     has_more = True
     while has_more:
       res = self.api.history(self.id, latest, oldest, count=1000).body
@@ -89,37 +92,40 @@ class SlackChannel(object):
       if not messages:
         return
 
-      for m in messages:
+      for msg in messages:
         # Prepare for next page query
-        latest = m['ts']
+        latest = msg['ts']
 
         user = None
-        if 'user' in m:
-          user = next((u for u in self.members if u.id == m['user']), None)
+        if 'user' in msg:
+          user = next((u for u in self.members if u.id == msg['user']), None)
 
         # Delete user messages
-        if m['type'] == 'message':
-          yield SlackMessage(m, user, self, self._slack)
+        if msg['type'] == 'message':
+          yield SlackMessage(msg, user, self, self._slack)
 
-  def replies_to(self, msg):
+  def replies_to(self, base_msg):
     """
     returns the replies to a given SlackMessage instance
-    :param msg: message instance to find replies to
+    :param base_msg: message instance to find replies to
     :return:
     """
-    res = self.api.replies(self.id, msg.ts).body
+    res = self.api.replies(self.id, base_msg.ts).body
     if not res['ok']:
       return
-    for m in res['messages']:
+    for msg in res['messages']:
       user = None
-      if 'user' in m:
-        user = next((u for u in self.members if u.id == m['user']), None)
+      if 'user' in msg:
+        user = next((u for u in self.members if u.id == msg['user']), None)
       # Delete user messages
-      if m['type'] == 'message':
-        yield SlackMessage(m, user, self, self._slack)
+      if msg['type'] == 'message':
+        yield SlackMessage(msg, user, self, self._slack)
 
-  def files(self, ts_from=None, ts_to=None, types=None):
-    return SlackFile.list(self._slack, channel=self.id, ts_from=ts_from, ts_to=ts_to, types=types)
+  def files(self, after=None, before=None, types=None):
+    """
+    list all files of this channel
+    """
+    return SlackFile.list(self._slack, channel=self.id, after=after, before=before, types=types)
 
 
 class SlackDirectMessage(SlackChannel):
@@ -148,6 +154,9 @@ class SlackMessage(object):
     self.pinned_to = entry.get('pinned_to', False)
 
   def delete(self, as_user=False):
+    """
+    deletes this message
+    """
     try:
       # No response is a good response
       self.api.delete(self._channel.id, self.ts, as_user=as_user)
@@ -158,6 +167,9 @@ class SlackMessage(object):
       return error
 
   def replies(self):
+    """
+    list all replies of this message
+    """
     return self._channel.replies_of(self)
 
   def __str__(self):
@@ -182,17 +194,20 @@ class SlackFile(object):
     self.api = slack.api.files
 
   @staticmethod
-  def list(slack, user=None, ts_from=None, ts_to=None, types=None, channel=None):
-    ts_from = _parse_time(ts_from)
-    ts_to = _parse_time(ts_to)
+  def list(slack, user=None, after=None, before=None, types=None, channel=None):
+    """
+    list all given files
+    """
+    after = _parse_time(after)
+    before = _parse_time(before)
     page = 1
     has_more = True
     api = slack.api.files
-    slack.log.debug('list all files(user=%s, ts_from=%s, ts_to=%s, types=%s, channel=%s', user, ts_from, ts_to, types,
+    slack.log.debug('list all files(user=%s, after=%s, before=%s, types=%s, channel=%s', user, after, before, types,
                     channel)
 
     while has_more:
-      res = api.list(user=user, ts_from=ts_from, to_to=ts_to, type=types, channel=channel, page=page, count=100).body
+      res = api.list(user=user, ts_from=after, ts_to=before, type=types, channel=channel, page=page, count=100).body
 
       if not res['ok']:
         return
@@ -203,8 +218,8 @@ class SlackFile(object):
       has_more = current_page < total_pages
       page = current_page + 1
 
-      for f in files:
-        yield SlackFile(f, slack.user[f['user']], slack)
+      for sfile in files:
+        yield SlackFile(sfile, slack.user[sfile['user']], slack)
 
   def __str__(self):
     return self.name
@@ -227,17 +242,16 @@ class SlackFile(object):
       return error
 
 
-def _parse_time(t):
+def _parse_time(time_str):
   import time
 
-  if t is None:
+  if time_str is None:
     return None
-  if isinstance(t, int) or isinstance(t, time):
-    return t
+  if isinstance(time_str, (int, time)):
+    return time_str
   try:
-    if len(t) == 8:
-      return time.mktime(time.strptime(t, "%Y%m%d"))
-    else:
-      return time.mktime(time.strptime(t, "%Y%m%d%H%M"))
+    if len(time_str) == 8:
+      return time.mktime(time.strptime(time_str, "%Y%m%d"))
+    return time.mktime(time.strptime(time_str, "%Y%m%d%H%M"))
   except ValueError:
     return None

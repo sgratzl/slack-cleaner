@@ -2,27 +2,27 @@
 """
   deprecated cli mimicing old slack cleander
 """
-from .slack_cleaner2 import SlackCleaner
-from .predicates import match_user, match, name, and_, by_user, match_text, is_not_pinned, is_bot
 from colorama import Fore
+from .slack_cleaner2 import SlackCleaner
+from .predicates import match_user, match, is_name, and_, by_user, match_text, is_not_pinned, is_bot
 
 
 def _show_infos(slack):
   """
   show generic information about this slack workspace
   """
-  def print_dict(name, d):
-    msg = Fore.GREEN + name + ':' + Fore.RESET
-    for k, v in d.items():
+  def _print_dict(cat, data):
+    msg = Fore.GREEN + cat + ':' + Fore.RESET
+    for k, v in data.items():
       msg += '\n' + k + ' ' + str(v)
     slack.log.info(msg)
 
-  print_dict('users', {u.id: '{} = {]'.format(u.name, u.real_name) for u in slack.users})
+  _print_dict('users', {u.id: '{} = {}'.format(u.name, u.real_name) for u in slack.users})
 
-  print_dict('public channels', {u.id: u.name for u in slack.channels})
-  print_dict('private channels', {u.id: u.name for u in slack.groups})
-  print_dict('instant messages', {u.id: u.name for u in slack.ims})
-  print_dict('mulit user direct messsages', {u.id: u.name for u in slack.mpim})
+  _print_dict('public channels', {u.id: u.name for u in slack.channels})
+  _print_dict('private channels', {u.id: u.name for u in slack.groups})
+  _print_dict('instant messages', {u.id: u.name for u in slack.ims})
+  _print_dict('mulit user direct messsages', {u.id: u.name for u in slack.mpim})
 
 
 def _resolve_user(slack, args):
@@ -40,7 +40,7 @@ def _channels(slack, args):
   """
   channels = []
 
-  filter_f = match if args.regex else name
+  filter_f = match if args.regex else is_name
 
   if args.channel:
     channels.extend(filter(filter_f(args.channel), slack.channels))
@@ -201,7 +201,7 @@ def main():
   slack = SlackCleaner(args.token, args.log, args.rate)
 
   if args.info:
-    _show_infos(slack, args)
+    _show_infos(slack)
   elif args.message:
     _delete_messages(slack, args)
   elif args.file:

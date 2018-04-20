@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import datetime
+"""
+ logger util method
+"""
+from datetime import datetime
 import logging
 import pprint
 import sys
@@ -9,7 +12,10 @@ from colorama import Fore, init
 init()
 
 
-class SlackLoggerRound:
+class SlackLoggerLayer(object):
+  """
+   one stack element
+  """
   def __init__(self, name):
     self.deleted = 0
     self.errors = 0
@@ -25,12 +31,15 @@ class SlackLoggerRound:
       self.deleted += 1
 
 
-class SlackLogger:
+class SlackLogger(object):
+  """
+  helper logging class
+  """
   def __init__(self, to_file=False, sleep_for=0):
     self._sleep_for = sleep_for
     self._log = logging.getLogger('slack-cleaner')
     self._pp = pprint.PrettyPrinter(indent=2)
-    self._rounds = [SlackLoggerRound('overall')]
+    self._layers = [SlackLoggerLayer('overall')]
 
     if to_file:
       ts = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -39,9 +48,9 @@ class SlackLogger:
       self._log.addHandler(file_log_handler)
 
     # And always display on console
-    s = logging.StreamHandler()
-    s.setLevel(logging.INFO)
-    self._log.addHandler(s)
+    out = logging.StreamHandler()
+    out.setLevel(logging.INFO)
+    self._log.addHandler(out)
 
     self.debug = self._log.debug
     self.info = self._log.info
@@ -51,8 +60,11 @@ class SlackLogger:
     self.log = self._log.log
 
   def deleted(self, file_or_msg, error=None):
-    for round in self._rounds:
-      round(error)
+    """
+    log a deleted file or message with optional error
+    """
+    for layer in self._layers:
+      layer(error)
 
     if error:
       sys.stdout.write(Fore.RED + 'x' + Fore.RESET)
@@ -68,26 +80,35 @@ class SlackLogger:
       sleep(self._sleep_for)
 
   def group(self, name):
-    r = SlackLoggerRound(name)
+    """
+    push another log group
+    """
+    layer = SlackLoggerLayer(name)
     self.info(u'start deleting: %s', name)
-    self._rounds.append(r)
-    return r
+    self._layers.append(layer)
+    return layer
 
   def __enter__(self):
     return self
 
   def pop(self):
-    r = self._rounds[-1]
-    del self._rounds[-1]
-    self.info(u'stop deleting: %s', r)
-    return r
+    """
+    pops last log group
+    """
+    layer = self._layers[-1]
+    del self._layers[-1]
+    self.info(u'stop deleting: %s', layer)
+    return layer
 
   def __exit__(self, *args):
     self.pop()
     return self
 
   def __str__(self):
-    return self._rounds[0]
+    return self._layers[0]
 
   def summary(self):
+    """
+    logs ones summary
+    """
     self.info('summary %s', self)

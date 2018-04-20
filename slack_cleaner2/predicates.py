@@ -12,10 +12,10 @@ class AndPredicate(object):
   def __init__(self, children=None):
     self.children = children or []
 
-  def __call__(self, x):
+  def __call__(self, obj):
     if not self.children:
       return True
-    return all(f(x) for f in self.children)
+    return all(f(obj) for f in self.children)
 
   def __and__(self, other):
     if isinstance(other, AndPredicate):
@@ -42,16 +42,16 @@ class OrPredicate(object):
   def __init__(self, children=None):
     self.children = children or []
 
-  def __call__(self, x):
+  def __call__(self, obj):
     if not self.children:
       return False
-    return any(f(x) for f in self.children)
+    return any(f(obj) for f in self.children)
 
   def __or__(self, other):
     if isinstance(other, OrPredicate):
       self.children = self.children + other.children
       return self
-    self.c.append(other)
+    self.children.append(other)
     return self
 
   def __and__(self, other):
@@ -72,8 +72,8 @@ class Predicate(object):
   def __init__(self, fun):
     self.fun = fun
 
-  def __call__(self, x):
-    return self.fun(x)
+  def __call__(self, obj):
+    return self.fun(obj)
 
   def __and__(self, other):
     return AndPredicate([self.fun, other])
@@ -82,14 +82,18 @@ class Predicate(object):
     return OrPredicate([self.fun, other])
 
 
-"""
-predicate for filtering messages or files that are not pinned
-"""
-is_not_pinned = Predicate(lambda msg_or_file: not msg_or_file.pinned_to)
-"""
-prediate for filtering messages or files created by a bot
-"""
-is_bot = Predicate(lambda msg_or_user: msg_or_user.bot)
+def is_not_pinned():
+  """
+  predicate for filtering messages or files that are not pinned
+  """
+  return Predicate(lambda msg_or_file: not msg_or_file.pinned_to)
+
+
+def is_bot():
+  """
+  prediate for filtering messages or files created by a bot
+  """
+  return Predicate(lambda msg_or_user: msg_or_user.bot)
 
 
 def match(pattern, attr='name'):
@@ -102,7 +106,7 @@ def match(pattern, attr='name'):
   return Predicate(lambda channel: regex.search(getattr(channel, attr)) is not None)
 
 
-def name(channel_name):
+def is_name(channel_name):
   """
   predicate for filtering channels with the given name
   """
