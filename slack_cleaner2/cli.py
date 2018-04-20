@@ -71,9 +71,9 @@ def _delete_messages(slack, args):
   if args.pattern:
     pred.append(match_text(args.pattern))
   if args.keeppinned:
-    pred.append(is_not_pinned)
+    pred.append(is_not_pinned())
   if args.bot:
-    pred.append(is_bot)
+    pred.append(is_bot())
   if args.botname:
     pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
 
@@ -105,9 +105,9 @@ def _delete_files(slack, args):
   if args.pattern:
     pred.append(match(args.pattern))
   if args.keeppinned:
-    pred.append(is_not_pinned)
+    pred.append(is_not_pinned())
   if args.bot:
-    pred.append(is_bot)
+    pred.append(is_bot())
   if args.botname:
     pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
 
