@@ -121,7 +121,7 @@ class SlackChannel(object):
   channel name
   """
 
-  members = None  # type: [SlackUser]
+  members = []  # type: [SlackUser]
   """
   list of members
   """

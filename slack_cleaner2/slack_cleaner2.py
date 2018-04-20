@@ -20,33 +20,33 @@ class SlackCleaner(object):
   """
   api = None  # type: Slacker
   """
-  attributes for the underlying slacker instance
+  underlying slacker instance
   """
-  users = None  # type: [SlackUser]
+  users = []  # type: [SlackUser]
   """
   list of known users
   """
-  user = None  # type: {str:SlackUser}
+  user = {}  # type: {str:SlackUser}
   """
   dictionary lookup from user id to SlackUser object
   """
-  channels = None  # type: [SlackChannel]
+  channels = []  # type: [SlackChannel]
   """
   list of channels
   """
-  groups = None  # type: [SlackChannel]
+  groups = []  # type: [SlackChannel]
   """
   list of groups
   """
-  mpims = None  # type: [SlackChannel]
+  mpims = []  # type: [SlackChannel]
   """
   list of multi person instant message
   """
-  ims = None  # type: [SlackDirectMessage]
+  ims = []  # type: [SlackDirectMessage]
   """
   list of instant messages = direct messags
   """
-  conversations = None  # type: [SlackChannel]
+  conversations = []  # type: [SlackChannel]
   """
   list of channel+group+mpims+ims
   """
