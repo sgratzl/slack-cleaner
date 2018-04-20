@@ -18,10 +18,11 @@ class SlackLoggerLayer(object):
    one stack element
   """
 
-  def __init__(self, name):
+  def __init__(self, name, parent):
     self.deleted = 0
     self.errors = 0
     self.name = name
+    self._parent = parent
 
   def __str__(self):
     return u'{n}: deleted: {d}, errors: {e}'.format(n=self.name, d=self.deleted, e=self.errors)
@@ -31,6 +32,13 @@ class SlackLoggerLayer(object):
       self.errors += 1
     else:
       self.deleted += 1
+
+  def __enter__(self):
+    return self
+
+  def __exit__(self, *args):
+    self._parent.pop()
+    return self._parent
 
 
 class SlackLogger(object):
@@ -42,7 +50,7 @@ class SlackLogger(object):
     self._sleep_for = sleep_for
     self._log = logging.getLogger('slack-cleaner')
     self._pp = pprint.PrettyPrinter(indent=2)
-    self._layers = [SlackLoggerLayer('overall')]
+    self._layers = [SlackLoggerLayer('overall', self)]
 
     if to_file:
       ts = datetime.now().strftime('%Y%m%d-%H%M%S')
@@ -50,6 +58,7 @@ class SlackLogger(object):
       file_log_handler.setLevel(logging.DEBUG)
       self._log.addHandler(file_log_handler)
 
+    self._log.setLevel(logging.DEBUG)
     # And always display on console
     out = logging.StreamHandler()
     out.setLevel(logging.INFO)
@@ -86,13 +95,10 @@ class SlackLogger(object):
     """
     push another log group
     """
-    layer = SlackLoggerLayer(name)
+    layer = SlackLoggerLayer(name, self)
     self.info(u'start deleting: %s', name)
     self._layers.append(layer)
     return layer
-
-  def __enter__(self):
-    return self
 
   def pop(self):
     """
@@ -103,12 +109,8 @@ class SlackLogger(object):
     self.info(u'stop deleting: %s', layer)
     return layer
 
-  def __exit__(self, *args):
-    self.pop()
-    return self
-
   def __str__(self):
-    return self._layers[0]
+    return str(self._layers[0])
 
   def summary(self):
     """

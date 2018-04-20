@@ -336,7 +336,7 @@ class SlackMessage(object):
     return self._channel.replies_to(self)
 
   def __str__(self):
-    return u'{c}:{t}'.format(c=self._channel.name, t=self.ts)
+    return u'{c}:{t} ({u}): {s}'.format(c=self._channel.name, t=self.ts, u='bot' if self.bot else self.user, s=self.text[0:20] if len(self.text) > 20 else self.text)
 
   def __repr__(self):
     return self.__str__()
