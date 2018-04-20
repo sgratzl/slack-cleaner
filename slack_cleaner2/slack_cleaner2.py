@@ -1,6 +1,8 @@
+"""
+ main module containing the main SlackCleaner class
+"""
 from requests.sessions import Session
 from slacker import Slacker
-
 from .model import SlackUser, SlackChannel, SlackDirectMessage, SlackFile
 from .logger import SlackLogger
 
@@ -77,8 +79,8 @@ class SlackCleaner(object):
     """
     if not channels:
       channels = self.conversations
-    for c in channels:
-      for msg in c.msgs(ts_from=ts_from, ts_to=ts_to):
+    for channel in channels:
+      for msg in channel.msgs(ts_from=ts_from, ts_to=ts_to):
         yield msg
 
 

@@ -5,7 +5,7 @@
 
 import pytest
 # from slack_cleaner2 import slack_cleaner2
-from slack_cleaner2 import cli
+# from slack_cleaner2 import cli
 
 
 @pytest.fixture
