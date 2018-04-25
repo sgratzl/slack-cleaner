@@ -155,7 +155,7 @@ def match_text(pattern):
 
 def match_user(pattern):
   """
-  predicate for filtering users which match the given regex (id, name, display_name, email, real_name)
+  predicate for filtering users which match the given regex (any of id, name, display_name, email, real_name)
 
   :param pattern: regex to match
   :type pattern: str
@@ -170,7 +170,7 @@ def match_user(pattern):
 
 def is_member(user):
   """
-  predicate for filtering channels in which the user is a member of
+  predicate for filtering channels in which the given user is a member of
 
   :param user: the user to check
   :type user: SlackUser

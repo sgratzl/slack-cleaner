@@ -16,7 +16,7 @@ class SlackCleaner(object):
 
   log = None  # type: SlackLogger
   """
-  logger
+  SlackLogger instance for easy logging
   """
   api = None  # type: Slacker
   """
@@ -36,15 +36,15 @@ class SlackCleaner(object):
   """
   groups = []  # type: [SlackChannel]
   """
-  list of groups
+  list of groups aka private channels
   """
   mpims = []  # type: [SlackChannel]
   """
-  list of multi person instant message
+  list of multi person instant message channels
   """
   ims = []  # type: [SlackDirectMessage]
   """
-  list of instant messages = direct messags
+  list of instant messages = direct messages
   """
   conversations = []  # type: [SlackChannel]
   """
@@ -105,16 +105,16 @@ class SlackCleaner(object):
     """
     list all known slack files for the given parameter as a generator
 
-    :param user: limit to given user id
-    :type user: str
-    :param after: limit to entries after´this timestamp
+    :param user: limit to given user
+    :type user: str,SlackUser
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :param types: see types in slack api, default 'all'
     :type types: str
-    :param channel: limit to a certain channel id
-    :type channel: str
+    :param channel: limit to a certain channel
+    :type channel: str,SlackChannel
     :return: generator of SlackFile objects
     :rtype: SlackFile
     """
@@ -124,11 +124,11 @@ class SlackCleaner(object):
     """
     list all known slack messages for the given parameter as a generator
 
-    :param channels: limit to given channels default all conversations
+    :param channels: limit to given channels by default of all conversations
     :type channels: iterable of SlackChannel
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
     :rtype: SlackMessage

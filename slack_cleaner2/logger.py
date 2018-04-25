@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
- logger util method
+ logger util module
 """
 import logging
 import pprint
@@ -15,7 +15,7 @@ init()
 
 class SlackLoggerLayer(object):
   """
-   one stack element
+   one stack element to group delete operations
   """
 
   def __init__(self, name, parent):
@@ -64,6 +64,7 @@ class SlackLogger(object):
     out.setLevel(logging.INFO)
     self._log.addHandler(out)
 
+    # wrap regular log methods
     self.debug = self._log.debug
     self.info = self._log.info
     self.warning = self._log.warning

@@ -75,11 +75,11 @@ class SlackUser(object):
 
   def files(self, after=None, before=None, types=None):
     """
-    list all files of the this user
+    list all files of this user
 
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :param types: see slack api doc
     :type types: str
@@ -90,11 +90,11 @@ class SlackUser(object):
 
   def msgs(self, after=None, before=None):
     """
-    list all messages of the this user
+    list all messages of this user
 
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
     :rtype: SlackMessage
@@ -157,11 +157,11 @@ class SlackChannel(object):
 
   def msgs(self, after=None, before=None):
     """
-    retrieve the msgs of all messages as a generator
+    retrieve all messages as a generator
 
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :return: generator of SlackMessage objects
     :rtype: SlackMessage
@@ -213,9 +213,9 @@ class SlackChannel(object):
     """
     list all files of this channel
 
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :param types: see slack api docs
     :type types: str
@@ -232,7 +232,7 @@ class SlackDirectMessage(SlackChannel):
 
   user = None  # type: SlackUser
   """
-  user spoken to
+  user talking to
   """
 
   def __init__(self, entry, user, api, slack):
@@ -278,7 +278,7 @@ class SlackMessage(object):
 
   bot = False  # type: bool
   """
-  written by a bot
+  is the message written by a bot
   """
 
   pinned_to = False  # type: bool
@@ -395,9 +395,9 @@ class SlackFile(object):
 
     :param user: user id to limit search
     :type user: str,SlackUser
-    :param after: limit to entries after´this timestamp
+    :param after: limit to entries after the given timestamp
     :type after: int,str,time
-    :param before: limit to entries before´this timestamp
+    :param before: limit to entries before the given timestamp
     :type before: int,str,time
     :param channel: channel to limit search
     :type channel: str,SlackChannel

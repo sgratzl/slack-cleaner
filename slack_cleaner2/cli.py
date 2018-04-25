@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-  deprecated cli mimicing old slack cleander
+  deprecated cli mimicing old slack cleaner
 """
-from colorama import Fore
 from itertools import ifilter
+from colorama import Fore
 
 from .predicates import match_user, match, is_name, and_, by_user, match_text, is_not_pinned, is_bot
 from .slack_cleaner2 import SlackCleaner
@@ -80,12 +80,13 @@ def _delete_messages(slack, args):
   pred = and_(pred)
   total = 0
   for channel in channels:
-    for msg in channel.msgs(args.after, args.before):
-      if not pred(msg):
-        continue
-      if args.perform:
-        msg.delete(args.as_user)
-      total += 1
+    with slack.log.group(channel.name):
+      for msg in channel.msgs(args.after, args.before):
+        if not pred(msg):
+          continue
+        if args.perform:
+          msg.delete(args.as_user)
+        total += 1
 
   slack.log.info('summary: %s', slack.log)
 
@@ -114,12 +115,13 @@ def _delete_files(slack, args):
   pred = and_(pred)
   total = 0
   for channel in channels:
-    for sfile in channel.files(args.after, args.before, args.types):
-      if not pred(sfile):
-        continue
-      if args.perform:
-        sfile.delete(args.as_user)
-      total += 1
+    with slack.log.group(channel.name):
+      for sfile in channel.files(args.after, args.before, args.types):
+        if not pred(sfile):
+          continue
+        if args.perform:
+          sfile.delete(args.as_user)
+        total += 1
 
   slack.log.info('summary: %s', slack.log)
 
@@ -211,7 +213,7 @@ def main():
     _delete_files(slack, args)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
   import sys
 
   sys.exit(main())  # pragma: no cover
