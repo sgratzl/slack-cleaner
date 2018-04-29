@@ -2,11 +2,16 @@
 """
   deprecated cli mimicing old slack cleaner
 """
-from itertools import ifilter
 from colorama import Fore
 
 from .predicates import match_user, match, is_name, and_, by_user, match_text, is_not_pinned, is_bot
 from .slack_cleaner2 import SlackCleaner
+
+
+try:
+  from future_builtins import filter
+except ImportError:
+  pass
 
 
 def _show_infos(slack):
@@ -15,17 +20,17 @@ def _show_infos(slack):
   """
 
   def _print_dict(cat, data):
-    msg = Fore.GREEN + cat + ':' + Fore.RESET
+    msg = u'{}{}:{}'.format(Fore.GREEN, cat, Fore.RESET)
     for k, v in data.items():
-      msg += '\n' + k + ' ' + str(v)
+      msg += u'\n{} {}'.format(k, v)
     slack.log.info(msg)
 
-  _print_dict('users', {u.id: '{} = {}'.format(u.name, u.real_name) for u in slack.users})
+  _print_dict(u'users', {u.id: u'{} = {}'.format(u.name, u.real_name) for u in slack.users})
 
-  _print_dict('public channels', {u.id: u.name for u in slack.channels})
-  _print_dict('private channels', {u.id: u.name for u in slack.groups})
-  _print_dict('instant messages', {u.id: u.name for u in slack.ims})
-  _print_dict('mulit user direct messsages', {u.id: u.name for u in slack.mpim})
+  _print_dict(u'public channels', {u.id: u.name for u in slack.channels})
+  _print_dict(u'private channels', {u.id: u.name for u in slack.groups})
+  _print_dict(u'instant messages', {u.id: u.name for u in slack.ims})
+  _print_dict(u'mulit user direct messsages', {u.id: u.name for u in slack.mpim})
 
 
 def _resolve_user(slack, args):
@@ -34,7 +39,7 @@ def _resolve_user(slack, args):
   """
   if args.user == '*':
     return None
-  return next(ifilter(match_user(args.user), slack.users))
+  return next(filter(match_user(args.user), slack.users))
 
 
 def _channels(slack, args):
@@ -46,13 +51,13 @@ def _channels(slack, args):
   filter_f = match if args.regex else is_name
 
   if args.channel:
-    channels.extend(ifilter(filter_f(args.channel), slack.channels))
+    channels.extend(filter(filter_f(args.channel), slack.channels))
   if args.group:
-    channels.extend(ifilter(filter_f(args.group), slack.groups))
+    channels.extend(filter(filter_f(args.group), slack.groups))
   if args.direct:
-    channels.extend(ifilter(filter_f(args.direct), slack.ims))
+    channels.extend(filter(filter_f(args.direct), slack.ims))
   if args.mpdirect:
-    channels.extend(ifilter(filter_f(args.mpdirect), slack.mpim))
+    channels.extend(filter(filter_f(args.mpdirect), slack.mpim))
 
   return channels
 
@@ -75,7 +80,7 @@ def _delete_messages(slack, args):
   if args.bot:
     pred.append(is_bot())
   if args.botname:
-    pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
+    pred.append(by_user(next(filter(match_user(args.botname), slack.users))))
 
   pred = and_(pred)
   total = 0
@@ -88,7 +93,7 @@ def _delete_messages(slack, args):
           msg.delete(args.as_user)
         total += 1
 
-  slack.log.info('summary: %s', slack.log)
+  slack.log.info(u'summary: %s', slack.log)
 
 
 def _delete_files(slack, args):
@@ -110,7 +115,7 @@ def _delete_files(slack, args):
   if args.bot:
     pred.append(is_bot())
   if args.botname:
-    pred.append(by_user(next(ifilter(match_user(args.botname), slack.users))))
+    pred.append(by_user(next(filter(match_user(args.botname), slack.users))))
 
   pred = and_(pred)
   total = 0
@@ -123,7 +128,7 @@ def _delete_files(slack, args):
           sfile.delete(args.as_user)
         total += 1
 
-  slack.log.info('summary: %s', slack.log)
+  slack.log.info(u'summary: %s', slack.log)
 
 
 def _args():
