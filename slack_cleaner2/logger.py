@@ -47,7 +47,7 @@ class SlackLogger(object):
   """
 
   def __init__(self, to_file=False, sleep_for=0):
-    self._sleep_for = sleep_for
+    self.sleep_for = sleep_for
     self._log = logging.getLogger('slack-cleaner')
     self._pp = pprint.PrettyPrinter(indent=2)
     self._layers = [SlackLoggerLayer('overall', self)]
@@ -88,9 +88,9 @@ class SlackLogger(object):
       sys.stdout.flush()
       self.debug(u'deleted entry: %s', file_or_msg)
 
-    if self._sleep_for > 0:
+    if self.sleep_for > 0:
       from time import sleep
-      sleep(self._sleep_for)
+      sleep(self.sleep_for)
 
   def group(self, name):
     """

@@ -101,6 +101,18 @@ class SlackCleaner(object):
     # all different types with a similar interface
     self.conversations = self.channels + self.groups + self.mpim + self.ims
 
+  @property
+  def sleep_for(self):
+    """
+    get the sleep_for attribute
+    :rtype: float
+    """
+    return self.log.sleep_for
+
+  @sleep_for.setter
+  def sleep_for(self, value):
+    self.log.sleep_for = value
+
   def files(self, user=None, after=None, before=None, types=None, channel=None):
     """
     list all known slack files for the given parameter as a generator
