@@ -128,6 +128,10 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
 
         # Delete bot messages
         if bot and (m.get('subtype') == 'bot_message' or 'bot_id' in m):
+          # If botname specified conditionalise the match
+          if args.botname:
+            if m.get('username') != user_id:
+              continue
           delete_message_on_channel(channel_id, m)
 
       # Exceptions
@@ -342,6 +346,9 @@ def resolve_user():
 
     if _user_id is None:
       sys.exit('User not found')
+  # For bots the username is customisable and can be any name
+  if args.botname:
+    _user_id = args.botname
   return _user_id
 
 
