@@ -155,7 +155,7 @@ class SlackChannel(object):
   def __repr__(self):
     return self.__str__()
 
-  def msgs(self, after=None, before=None):
+  def msgs(self, after=None, before=None, asc=False):
     """
     retrieve all messages as a generator
 
@@ -163,6 +163,8 @@ class SlackChannel(object):
     :type after: int,str,time
     :param before: limit to entries before the given timestamp
     :type before: int,str,time
+    :param asc: retunging a batch of messages in ascending order
+    :type asc: boolean
     :return: generator of SlackMessage objects
     :rtype: SlackMessage
     """
@@ -182,10 +184,11 @@ class SlackChannel(object):
       if not messages:
         return
 
-      for msg in messages:
-        # Prepare for next page query
-        latest = msg['ts']
+      # earliest message
+      # Prepare for next page query
+      latest = messages[-1]
 
+      for msg in (reversed(messages) if asc else messages):
         user = _find_user(self._slack.user, msg)
         # Delete user messages
         if msg['type'] == 'message':
