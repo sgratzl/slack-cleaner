@@ -161,10 +161,8 @@ def delete_message_on_channel(channel_id, message):
 
       counter.increase()
       if not args.quiet:
-        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
-                       + get_user_name(message)
-                       + ' : %s'
-                       , message.get('text', ''))
+        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC + '%s : %s',
+                       get_user_name(message), message.get('text', ''))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
@@ -176,10 +174,8 @@ def delete_message_on_channel(channel_id, message):
   else:
     counter.increase()
     if not args.quiet:
-      logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
-                     + get_user_name(message)
-                     + ' :  %s'
-                     , message.get('text', ''))
+      logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC + '%s : %s',
+                     get_user_name(message), message.get('text', ''))
 
 
 def remove_files(time_range, user_id=None, types=None, channel_id=None):
@@ -226,8 +222,7 @@ def delete_file(file):
       slack.files.delete(file['id'])
       counter.increase()
       if not args.quiet:
-        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
-                      + file.get('title', ''))
+        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC + '%s', file.get('title', ''))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s) ->' + Colors.ENDC, error)
       pp.pprint(file)
@@ -238,8 +233,7 @@ def delete_file(file):
   # Just simulate the task
   elif not args.quiet:
     counter.increase()
-    logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
-                   + file.get('title', ''))
+    logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC + '%s', file.get('title', ''))
 
 
 
@@ -386,28 +380,28 @@ def show_infos():
   """
 
   def print_dict(name, d):
-    m = Colors.GREEN + name + ':' + Colors.ENDC
+    m = u'{g}{name}:{e}'.format(g=Colors.GREEN, name=name, e=Colors.ENDC)
     for k, v in d.items():
-      m += '\n' + k + ' ' + str(v)
+      m += u'\n{k} {v}'.format(k=k, v=v)
     logger.info(m)
 
   res = slack.users.list().body
   if res['ok'] and res['members']:
-    users = { c['id']: c['name'] + ' = ' + c['profile']['real_name'] for c in res['members']}
+    users = {c['id']: u'{n} = {r}'.format(n=c['name'], r=c['profile']['real_name']) for c in res['members']}
   else:
     users = {}
   print_dict('users', users)
 
   res = slack.channels.list().body
   if res['ok'] and res['channels']:
-    channels = { c['id']: c['name'] for c in res['channels']}
+    channels = {c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
   print_dict('public channels', channels)
 
   res = slack.groups.list().body
   if res['ok'] and res['groups']:
-    groups = { c['id']: c['name'] for c in res['groups']}
+    groups = {c['id']: c['name'] for c in res['groups']}
   else:
     groups = {}
   print_dict('private channels', groups)
