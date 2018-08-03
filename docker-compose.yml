@@ -1,5 +1,11 @@
 version: '2.0'
 services:
+  mongo:
+    image: mongo:3
+    volumes:
+      - 'mongo_data:/data/db'
+    ports:
+      - '27017:27017'
   python:
     build:
       context: .
@@ -7,3 +13,9 @@ services:
       - '.:/data'
     working_dir: '/data'
     command:  tail -F anything
+    depends_on:
+      - mongo
+    links:
+      - mongo
+volumes:
+  mongo_data: null

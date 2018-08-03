@@ -1,0 +1,2 @@
+pymongo==3.7.1
+elasticsearch==6.3.0
