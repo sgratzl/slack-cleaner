@@ -49,6 +49,11 @@ class SlackUser(object):
   is it a bot or app user
   """
 
+  json = None  # type: dict
+  """
+  the underlying slack response as json
+  """
+
   def __init__(self, entry, slack):
     """
     :param entry: json dict entry as returned by slack api
@@ -62,7 +67,7 @@ class SlackUser(object):
     self.real_name = entry['profile'].get('real_name')
     self.display_name = entry['profile']['display_name']
     self.email = entry['profile'].get('email')
-    self._entry = entry
+    self.json = entry
     self.is_bot = entry['is_bot']
     self.is_app_user = entry['is_app_user']
     self.bot = self.is_bot or self.is_app_user
@@ -131,6 +136,11 @@ class SlackChannel(object):
   Slacker sub api
   """
 
+  json = None  # type: dict
+  """
+  the underlying slack response as json
+  """
+
   def __init__(self, entry, members, api, slack):
     """
     :param entry: json dict entry as returned by slack api
@@ -147,7 +157,7 @@ class SlackChannel(object):
     self.members = members
     self.api = api
     self._slack = slack
-    self._entry = entry
+    self.json = entry
 
   def __str__(self):
     return self.name
@@ -289,6 +299,11 @@ class SlackMessage(object):
   is the message pinned
   """
 
+  json = None  # type: dict
+  """
+  the underlying slack response as json
+  """
+
   def __init__(self, entry, user, channel, slack):
     """
     :param entry: json dict entry as returned by slack api
@@ -306,7 +321,7 @@ class SlackMessage(object):
     self._channel = channel
     self._slack = slack
     self.api = slack.api.chat
-    self._entry = entry
+    self.json = entry
     self.user = user
     self.bot = entry.get('subtype') == 'bot_message' or 'bot_id' in entry
     self.pinned_to = entry.get('pinned_to', False)
@@ -375,6 +390,11 @@ class SlackFile(object):
   is the message pinned
   """
 
+  json = None  # type: dict
+  """
+  the underlying slack response as json
+  """
+
   def __init__(self, entry, user, slack):
     """
     :param entry: json dict entry as returned by slack api
@@ -387,7 +407,7 @@ class SlackFile(object):
     self.name = entry['title']
     self.user = user
     self.pinned_to = entry.get('pinned_to', False)
-    self._entry = entry
+    self.json = entry
     self._slack = slack
     self.api = slack.api.files
 
