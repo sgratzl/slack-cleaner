@@ -198,7 +198,7 @@ class SlackChannel(object):
       # Prepare for next page query
       latest = messages[-1]
 
-      for msg in (reversed(messages) if asc else messages):
+      for msg in reversed(messages) if asc else messages:
         user = _find_user(self._slack.user, msg)
         # Delete user messages
         if msg['type'] == 'message':
