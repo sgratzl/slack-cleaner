@@ -49,8 +49,8 @@ class SlackLogger(object):
   def __init__(self, to_file=False, sleep_for=0):
     self.sleep_for = sleep_for
     self._log = logging.getLogger('slack-cleaner')
-    for h in list(self._log.handlers):
-      self._log.removeHandler(h)
+    for handler in list(self._log.handlers):
+      self._log.removeHandler(handler)
     self._pp = pprint.PrettyPrinter(indent=2)
     self._layers = [SlackLoggerLayer('overall', self)]
 
