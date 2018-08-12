@@ -4,6 +4,7 @@ services:
     image: mongo:3
     volumes:
       - 'mongo_data:/data/db'
+      - '.:/backup'
     ports:
       - '27017:27017'
   python:
