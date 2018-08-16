@@ -26,7 +26,7 @@ class SlackCleaner(object):
   """
   list of known users
   """
-  me = None  # type: SlackUser
+  myself = None  # type: SlackUser
   """
   the calling slack user, i.e the one whose token is used
   """
@@ -83,7 +83,7 @@ class SlackCleaner(object):
 
     # determine one self
     profile = _safe_attr(slack.users.profile.get(), 'profile')
-    self.me = next(u for u in self.users if u.email == profile['email'])
+    self.myself = next(u for u in self.users if u.email == profile['email'])
 
     self.channels = [
       SlackChannel(m, [self.user[u] for u in m['members']], slack.channels, self)
