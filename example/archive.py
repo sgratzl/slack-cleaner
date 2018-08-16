@@ -17,6 +17,8 @@ def archive(c):
   count = 0
   duplicates = 0
   for msg in filter(f, c.msgs(before=before)):
+    if 'client_msg_id' not in msg.json:
+      msg.json['client_msg_id'] = str(msg.json['ts'])
     try:
       _ = archive.insert_one(msg.json)
       count += 1
