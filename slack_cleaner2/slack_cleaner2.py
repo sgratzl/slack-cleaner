@@ -38,7 +38,7 @@ class SlackCleaner(object):
   """
   list of groups aka private channels
   """
-  mpims = []  # type: [SlackChannel]
+  mpim = []  # type: [SlackChannel]
   """
   list of multi person instant message channels
   """
@@ -48,7 +48,7 @@ class SlackCleaner(object):
   """
   conversations = []  # type: [SlackChannel]
   """
-  list of channel+group+mpims+ims
+  list of channel+group+mpim+ims
   """
 
   def __init__(self, token, sleep_for=0, log_to_file=False):
