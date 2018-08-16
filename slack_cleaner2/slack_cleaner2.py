@@ -82,8 +82,8 @@ class SlackCleaner(object):
     self.user = {u.id: u for u in self.users}
 
     # determine one self
-    identity = slack.users.identity()
-    self.me = self.user[identity['user']['id']]
+    profile = _safe_attr(slack.users.profile.get(), 'profile')
+    self.me = next(u for u in self.users if u.email == profile['email'])
 
     self.channels = [
       SlackChannel(m, [self.user[u] for u in m['members']], slack.channels, self)
@@ -164,4 +164,11 @@ def _safe_list(res, attr):
   res = res.body
   if not res['ok'] or not res[attr]:
     return []
+  return res[attr]
+
+
+def _safe_attr(res, attr):
+  res = res.body
+  if not res['ok'] or attr not in res:
+    return dict()
   return res[attr]
