@@ -26,6 +26,10 @@ class SlackCleaner(object):
   """
   list of known users
   """
+  me = None  # type: SlackUser
+  """
+  the calling slack user, i.e the one whose token is used
+  """
   user = {}  # type: {str:SlackUser}
   """
   dictionary lookup from user id to SlackUser object
@@ -76,6 +80,10 @@ class SlackCleaner(object):
     self.log.debug('collected users %s', self.users)
 
     self.user = {u.id: u for u in self.users}
+
+    # determine one self
+    identity = slack.users.identity()
+    self.me = self.user[identity['user']['id']]
 
     self.channels = [
       SlackChannel(m, [self.user[u] for u in m['members']], slack.channels, self)
