@@ -337,7 +337,7 @@ class SlackMessage(object):
     """
     try:
       # No response is a good response
-      self.api.delete(self._channel.id, self.ts, as_user=as_user)
+      self.api.delete(self._channel.id, self.json['ts'], as_user=as_user)
       self._slack.log.deleted(self)
       return None
     except Exception as error:
