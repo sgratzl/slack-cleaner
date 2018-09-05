@@ -26,6 +26,10 @@ class SlackCleaner(object):
   """
   list of known users
   """
+  myself = None  # type: SlackUser
+  """
+  the calling slack user, i.e the one whose token is used
+  """
   user = {}  # type: {str:SlackUser}
   """
   dictionary lookup from user id to SlackUser object
@@ -38,7 +42,7 @@ class SlackCleaner(object):
   """
   list of groups aka private channels
   """
-  mpims = []  # type: [SlackChannel]
+  mpim = []  # type: [SlackChannel]
   """
   list of multi person instant message channels
   """
@@ -48,7 +52,7 @@ class SlackCleaner(object):
   """
   conversations = []  # type: [SlackChannel]
   """
-  list of channel+group+mpims+ims
+  list of channel+group+mpim+ims
   """
 
   def __init__(self, token, sleep_for=0, log_to_file=False):
@@ -76,6 +80,10 @@ class SlackCleaner(object):
     self.log.debug('collected users %s', self.users)
 
     self.user = {u.id: u for u in self.users}
+
+    # determine one self
+    profile = _safe_attr(slack.users.profile.get(), 'profile')
+    self.myself = next(u for u in self.users if u.email == profile['email'])
 
     self.channels = [
       SlackChannel(m, [self.user[u] for u in m['members']], slack.channels, self)
@@ -156,4 +164,11 @@ def _safe_list(res, attr):
   res = res.body
   if not res['ok'] or not res[attr]:
     return []
+  return res[attr]
+
+
+def _safe_attr(res, attr):
+  res = res.body
+  if not res['ok'] or attr not in res:
+    return dict()
   return res[attr]

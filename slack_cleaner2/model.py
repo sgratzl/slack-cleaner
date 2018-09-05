@@ -269,7 +269,7 @@ class SlackMessage(object):
   internal model of a slack message
   """
 
-  ts = None  # type: int
+  ts = None  # type: float
   """
   message timestamp
   """
@@ -316,7 +316,7 @@ class SlackMessage(object):
     :type slack: SlackCleaner
     """
 
-    self.ts = entry['ts']
+    self.ts = float(entry['ts'])
     self.text = entry['text']
     self._channel = channel
     self._slack = slack
@@ -337,7 +337,7 @@ class SlackMessage(object):
     """
     try:
       # No response is a good response
-      self.api.delete(self._channel.id, self.ts, as_user=as_user)
+      self.api.delete(self._channel.id, self.json['ts'], as_user=as_user)
       self._slack.log.deleted(self)
       return None
     except Exception as error:

@@ -101,4 +101,4 @@ ENV/
 
 # mypy
 .mypy_cache/
-/example/archive_test.py
+/internal
