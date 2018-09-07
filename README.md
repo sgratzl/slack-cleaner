@@ -14,7 +14,7 @@ pip install slack_cleaner2
 
 latest version
 ```bash
-pip install -e git+https://github.com/sgratzl/slack_cleaner2.git
+pip install -e git+https://github.com/sgratzl/slack_cleaner.git@develop
 ```
 
 ## Usage
@@ -54,29 +54,14 @@ You will need to generate a Slack legacy token to use slack-cleaner. You can gen
 - `users:read`
 
 
-## Tips
-
-After the task, a backup file `slack-cleaner.<timestamp>.log` will be created in current directory if `--log` is supplied.
-
-If any API problem occurred, try `--rate=<delay-in-seconds>` to reduce the API call rate (which by default is unlimited).
-
-If you see the following warning from `urllib3`, consider to install missing
-packages: `pip install --upgrade requests[security]` or just upgrade your Python to 2.7.9.
-
-```
-InsecurePlatformWarning: A true SSLContext object is not available.
-          This prevents urllib3 from configuring SSL appropriately and may cause certain SSL connections to fail.
-          For more information, see https://urllib3.readthedocs.org/en/latest/security.html#insecureplatformwarning.
-```
-
 ## Credits
 
 **To all the people who can only afford a free plan. :cry:**
 
 [mit-image]: https://img.shields.io/badge/License-MIT-yellow.svg
 [mit-url]: https://opensource.org/licenses/MIT
-[ci-image]: https://circleci.com/gh/sgratzl/slack_cleaner2.svg?style=shield
-[ci-url]: https://circleci.com/gh/sgratzl/slack_cleaner2
+[ci-image]: https://circleci.com/gh/sgratzl/slack_cleaner/tree/develop.svg?style=shield
+[ci-url]: https://circleci.com/gh/sgratzl/slack_cleaner/tree/develop
 [pypi-image]: https://pypip.in/version/slack_cleaner2/badge.svg
 [pypi-url]: https://pypi.python.org/pypi/slack_cleaner2/
 [docs-image]: https://readthedocs.org/projects/slack-cleaner2/badge/?version=latest
