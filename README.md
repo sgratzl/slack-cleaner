@@ -58,6 +58,18 @@ You will need to generate a Slack legacy token to use slack-cleaner. You can gen
 
 **To all the people who can only afford a free plan. :cry:**
 
+
+## Development
+
+### Release
+
+```bash
+python setup.py clean sdist bdist_wheel
+twine upload dist/*
+```
+
+change version in `slack_cleaner2/_info.py`
+
 [mit-image]: https://img.shields.io/badge/License-MIT-yellow.svg
 [mit-url]: https://opensource.org/licenses/MIT
 [ci-image]: https://circleci.com/gh/sgratzl/slack_cleaner/tree/develop.svg?style=shield
