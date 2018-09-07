@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""metadata module"""
 
 __author__ = """Samuel Gratzl"""
 __email__ = 'samuel-gratzl@gmx.at'
