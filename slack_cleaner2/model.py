@@ -566,9 +566,9 @@ class SlackFile(object):
     :return: the stored file name
     :rtype: str
     """
-    with open(file_name or self.name, 'wb') as f:
+    with open(file_name or self.name, 'wb') as out:
       for chunk in self.download_stream():
-        f.write(chunk)
+        out.write(chunk)
     return file_name
 
 
