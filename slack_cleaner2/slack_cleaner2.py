@@ -66,6 +66,7 @@ class SlackCleaner(object):
     """
 
     self.log = SlackLogger(log_to_file, sleep_for)
+    self.token = token
 
     self.log.debug('start')
 
@@ -131,7 +132,7 @@ class SlackCleaner(object):
     :type after: int,str,time
     :param before: limit to entries before the given timestamp
     :type before: int,str,time
-    :param types: see types in slack api, default 'all'
+    :param types: see slack api, one or multiple of all,spaces,snippets,images,gdocs,zips,pdfs
     :type types: str
     :param channel: limit to a certain channel
     :type channel: str,SlackChannel

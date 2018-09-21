@@ -86,7 +86,7 @@ class SlackUser(object):
     :type after: int,str,time
     :param before: limit to entries before the given timestamp
     :type before: int,str,time
-    :param types: see slack api doc
+    :param types: see slack api, one or multiple of all,spaces,snippets,images,gdocs,zips,pdfs
     :type types: str
     :return: generator of SlackFile objects
     :rtype: SlackFile
@@ -230,7 +230,7 @@ class SlackChannel(object):
     :type after: int,str,time
     :param before: limit to entries before the given timestamp
     :type before: int,str,time
-    :param types: see slack api docs
+    :param types: see slack api, one or multiple of all,spaces,snippets,images,gdocs,zips,pdfs
     :type types: str
     :return: generator of SlackFile objects
     :rtype: SlackFile
@@ -372,7 +372,12 @@ class SlackFile(object):
 
   name = None  # type: str
   """
-  file name aka title
+  file name
+  """
+
+  title = None  # type: str
+  """
+  file title
   """
 
   api = None
@@ -387,7 +392,22 @@ class SlackFile(object):
 
   pinned_to = False  # type: bool
   """
-  is the message pinned
+  is the file pinned
+  """
+
+  mimetype = None  # type: str
+  """
+  the file mime type
+  """
+
+  size = None  # type: int
+  """
+  the file size
+  """
+
+  is_public = False  # type: bool
+  """
+  is the file public
   """
 
   json = None  # type: dict
@@ -404,9 +424,14 @@ class SlackFile(object):
     :type slack: SlackCleaner
     """
     self.id = entry['id']
-    self.name = entry['title']
+    self.name = entry['name']
+    self.title = entry['title']
     self.user = user
     self.pinned_to = entry.get('pinned_to', False)
+    self.mimetype = entry.get('mimetype')
+    self.size = entry['size']
+    self.is_public = entry['is_public']
+
     self.json = entry
     self._slack = slack
     self.api = slack.api.files
@@ -424,7 +449,7 @@ class SlackFile(object):
     :type before: int,str,time
     :param channel: channel to limit search
     :type channel: str,SlackChannel
-    :param types: see slack api
+    :param types: see slack api, one or multiple of all,spaces,snippets,images,gdocs,zips,pdfs
     :type types: str
     :return: generator of SlackFile objects
     :rtype: SlackFile
@@ -443,7 +468,7 @@ class SlackFile(object):
                     channel)
 
     while has_more:
-      res = api.list(user=user, ts_from=after, ts_to=before, type=types, channel=channel, page=page, count=100).body
+      res = api.list(user=user, ts_from=after, ts_to=before, types=types, channel=channel, page=page, count=100).body
 
       if not res['ok']:
         return
@@ -478,6 +503,37 @@ class SlackFile(object):
     except Exception as error:
       self._slack.log.deleted(self, error)
       return error
+
+  def download_response(self, stream=False):
+    import requests
+    headers = {
+      'Authorization': 'Bearer ' + self._slack.token
+    }
+    return requests.get(self.json['url_private_download'], headers=headers, stream=stream)
+
+  def download_json(self):
+    res = self.download_response(False)
+    return res.json()
+
+  def download_content(self):
+    res = self.download_response(False)
+    return res.content
+
+  def download_stream(self, chunk_size=1024):
+    res = self.download_response(True)
+    return res.iter_content(chunk_size=chunk_size)
+
+  def download_to(self, directory='.'):
+    from os import path
+
+    file_name = path.join(directory, self.name)
+    return self.download(file_name)
+
+  def download(self, file_name=None):
+    with open(file_name or self.name, 'wb') as f:
+      for chunk in self.download_stream():
+        f.write(chunk)
+    return file_name
 
 
 def _parse_time(time_str):
