@@ -504,32 +504,68 @@ class SlackFile(object):
       self._slack.log.deleted(self, error)
       return error
 
-  def download_response(self, stream=False):
+  def download_response(self, **kwargs):
+    """
+    downloads this file using python requests module
+
+    :return: python requests Response object
+    :rtype: Response
+    """
     import requests
     headers = {
       'Authorization': 'Bearer ' + self._slack.token
     }
-    return requests.get(self.json['url_private_download'], headers=headers, stream=stream)
+    return requests.get(self.json['url_private_download'], headers=headers, **kwargs)
 
   def download_json(self):
-    res = self.download_response(False)
+    """
+    downloads this file and returns the JSON content
+
+    :return: json content
+    :rtype: dict,list
+    """
+    res = self.download_response()
     return res.json()
 
   def download_content(self):
-    res = self.download_response(False)
+    """
+    downloads this file and returns the raw content
+
+    :return: the content
+    :rtype: bytes[]
+    """
+    res = self.download_response()
     return res.content
 
   def download_stream(self, chunk_size=1024):
-    res = self.download_response(True)
+    """
+    downloads this file and returns a content stream
+
+    :return: bytes[] chunk stream
+    :rtype: *bytes[]
+    """
+    res = self.download_response(stream=True)
     return res.iter_content(chunk_size=chunk_size)
 
   def download_to(self, directory='.'):
+    """
+    downloads this file to the given directory
+
+    :return: the stored file path
+    :rtype: str
+    """
     from os import path
 
     file_name = path.join(directory, self.name)
     return self.download(file_name)
 
   def download(self, file_name=None):
+    """
+    downloads this file to the given file name
+
+    :return: the stored file name
+    :rtype: str
+    """
     with open(file_name or self.name, 'wb') as f:
       for chunk in self.download_stream():
         f.write(chunk)
