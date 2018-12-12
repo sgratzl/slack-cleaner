@@ -66,17 +66,33 @@ def init_user_dict():
 init_user_dict()
 
 
+def matches_pattern(m, pattern):
+  regex = re.compile(args.pattern)
+  # name ... file
+  # text ... message
+  match = regex.search(m.get('text', m.get('name')))
+  if match is not None:
+    return True
+  # search attachments
+  attachments = m.get('attachments')
+  if attachments is not None:
+    for a in attachments:
+      text = a.get('text', '')
+      pretext = a.get('pretext', '')
+      for t in [pretext, text]:
+        match = regex.search(t)
+        if match is not None:
+          return True
+  return False
+
+
 def skip_to_delete(m):
   if args.keep_pinned and m.get('pinned_to'):
     return True
   if args.pattern:
-    regex = re.compile(args.pattern)
-    # name ... file
-    # text ... message
-    match = regex.search(m.get('text', m.get('name')))
-    if match == None:
-      return True
-  return False
+    if matches_pattern(m, args.pattern):
+      return False
+  return True
 
 
 def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False):
