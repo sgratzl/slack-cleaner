@@ -50,7 +50,7 @@ class Args():
     p.add_argument('--user',
                    help='Delete messages/files from certain user')
     p.add_argument('--botname',
-                   help='Delete messages/files from certain bots')
+                   help='Delete messages/files from certain bots. Implies --bot')
     p.add_argument('--bot', action='store_true',
                    help='Delete messages from bots')
 
@@ -99,7 +99,7 @@ class Args():
 
     self.user_name = args.user
     self.botname = args.botname
-    self.bot = args.bot
+    self.bot = args.bot or (args.botname is not None) # --botname implies --bot
     self.keep_pinned = args.keeppinned
     self.pattern = args.pattern
     self.start_time = args.after
