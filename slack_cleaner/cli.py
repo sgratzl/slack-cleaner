@@ -95,6 +95,24 @@ def skip_to_delete(m):
   return True
 
 
+def get_message_or_first_attachment_text(message):
+  text = message.get('text')
+  if text:
+    return text
+
+  # If there's no message text, try attachments
+  attachments = message.get('attachments')
+  if attachments is not None:
+    for a in attachments:
+      text = a.get('text', '')
+      pretext = a.get('pretext', '')
+      for t in [pretext, text]:
+        if t:
+          return t
+
+  return ''
+
+
 def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False):
   # Setup time range for query
   oldest = time_range.start_ts
@@ -178,7 +196,7 @@ def delete_message_on_channel(channel_id, message):
       counter.increase()
       if not args.quiet:
         logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC + '%s : %s',
-                       get_user_name(message), message.get('text', ''))
+                       get_user_name(message), get_message_or_first_attachment_text(message))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
@@ -191,7 +209,7 @@ def delete_message_on_channel(channel_id, message):
     counter.increase()
     if not args.quiet:
       logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC + '%s : %s',
-                     get_user_name(message), message.get('text', ''))
+                     get_user_name(message), get_message_or_first_attachment_text(message))
 
 
 def remove_files(time_range, user_id=None, types=None, channel_id=None):
