@@ -47,7 +47,7 @@ logger.addHandler(stderr_log_handler)
 # Print version information
 logger.info('Running slack-cleaner v' + __version__)
 
-# User dict
+# User dict: user_id -> name
 user_dict = {}
 
 
@@ -68,30 +68,31 @@ init_user_dict()
 
 def matches_pattern(m, pattern):
   regex = re.compile(args.pattern)
-  # name ... file
-  # text ... message
-  match = regex.search(m.get('text', m.get('name')))
-  if match is not None:
+  # name ... in case of a file
+  # text ... in case of a message
+  text = m.get('text', m.get('name'))
+  if regex.search(text) is not None:
     return True
-  # search attachments
+  # search attachments whether any matches the text
   attachments = m.get('attachments')
   if attachments is not None:
     for a in attachments:
-      text = a.get('text', '')
-      pretext = a.get('pretext', '')
-      for t in [pretext, text]:
-        match = regex.search(t)
-        if match is not None:
-          return True
+      if regex.search(a.get('text', '')) is not None or regex.search(a.get('pretext', '')) is not None:
+        return True
+  # no by default
   return False
 
 
-def skip_to_delete(m):
+def should_delete_item(m):
+  """
+  checks whether the given element should be deleted
+  """
   if args.keep_pinned and m.get('pinned_to'):
-    return True
-  if args.pattern:
-    if matches_pattern(m, args.pattern):
-      return False
+    return False
+  if args.pattern and not matches_pattern(m, args.pattern):
+    return False  # only delete messages matching the pattern
+
+  # by default delete
   return True
 
 
@@ -152,7 +153,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
       # Delete user messages
       if m['type'] == 'message':
         # exclude pinned message if asked
-        if skip_to_delete(m):
+        if not should_delete_item(m):
           continue
         # If it's a normal user message
         if m.get('user'):
@@ -239,7 +240,7 @@ def remove_files(time_range, user_id=None, types=None, channel_id=None):
     page = current_page + 1
 
     for f in files:
-      if skip_to_delete(f):
+      if not should_delete_item(f):
         continue
       # Delete user file
       delete_file(f)
