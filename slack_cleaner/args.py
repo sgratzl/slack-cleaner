@@ -66,7 +66,7 @@ class Args():
     p.add_argument('--types',
                    help='Delete files of a certain type, e.g., posts,pdfs')
     p.add_argument('--pattern',
-                   help='Delete messages with specified pattern (regex)')
+                   help='Delete messages/files with specified pattern or when one of their attachments matches (regex)')
 
     # Perform or not
     p.add_argument('--perform', action='store_true',
