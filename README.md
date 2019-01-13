@@ -48,13 +48,13 @@ optional arguments:
   --mpdirect MPDIRECT  Multiparty direct message's name, e.g.,
                        sherry,james,johndoe
   --user USER          Delete messages/files from certain user
-  --botname BOTNAME    Delete messages/files from certain bots
+  --botname BOTNAME    Delete messages/files from certain bots. Implies '--bot'
   --bot                Delete messages from bots
   --keeppinned         exclude pinned messages from deletion
   --after AFTER        Delete messages/files newer than this time (YYYYMMDD)
   --before BEFORE      Delete messages/files older than this time (YYYYMMDD)
   --types TYPES        Delete files of a certain type, e.g., posts,pdfs
-  --pattern PATTERN    Delete messages with specified pattern (regex)
+  --pattern PATTERN    Delete messages/files with specified pattern or if one of their attachments matches (regex)
   --perform            Perform the task
 ```
 

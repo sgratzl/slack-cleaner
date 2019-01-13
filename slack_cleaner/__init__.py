@@ -1,3 +1,3 @@
 __author__ = 'Lin, Ke-fei, Samuel Gratzl'
-__authoremail__ = 'kfei@kfei.net, samuel_gratzl@gmx.at'
-__version__ = '0.4.2'
+__authoremail__ = 'kfei@kfei.net, sam@sgratzl.com'
+__version__ = '0.5.1'

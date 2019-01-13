@@ -50,7 +50,7 @@ logger.addHandler(stderr_log_handler)
 # Print version information
 logger.info('Running slack-cleaner v' + __version__)
 
-# User dict
+# User dict: user_id -> name
 user_dict = {}
 
 
@@ -69,17 +69,52 @@ def init_user_dict():
 init_user_dict()
 
 
-def skip_to_delete(m):
-  if args.keep_pinned and m.get('pinned_to'):
+def matches_pattern(m, pattern):
+  regex = re.compile(args.pattern)
+  # name ... in case of a file
+  # text ... in case of a message
+  text = m.get('text', m.get('name'))
+  if regex.search(text) is not None:
     return True
-  if args.pattern:
-    regex = re.compile(args.pattern)
-    # name ... file
-    # text ... message
-    match = regex.search(m.get('text', m.get('name')))
-    if match == None:
-      return True
+  # search attachments whether any matches the text
+  attachments = m.get('attachments')
+  if attachments is not None:
+    for a in attachments:
+      if regex.search(a.get('text', '')) is not None or regex.search(a.get('pretext', '')) is not None:
+        return True
+  # no by default
   return False
+
+
+def should_delete_item(m):
+  """
+  checks whether the given element should be deleted
+  """
+  if args.keep_pinned and m.get('pinned_to'):
+    return False
+  if args.pattern and not matches_pattern(m, args.pattern):
+    return False  # only delete messages matching the pattern
+
+  # by default delete
+  return True
+
+
+def get_message_or_first_attachment_text(message):
+  text = message.get('text')
+  if text:
+    return text
+
+  # If there's no message text, try attachments
+  attachments = message.get('attachments')
+  if attachments is not None:
+    for a in attachments:
+      text = a.get('text', '')
+      pretext = a.get('pretext', '')
+      for t in [pretext, text]:
+        if t:
+          return t
+
+  return ''
 
 
 def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False):
@@ -121,7 +156,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
       # Delete user messages
       if m['type'] == 'message':
         # exclude pinned message if asked
-        if skip_to_delete(m):
+        if not should_delete_item(m):
           continue
         # If it's a normal user message
         if m.get('user'):
@@ -164,10 +199,8 @@ def delete_message_on_channel(channel_id, message):
 
       counter.increase()
       if not args.quiet:
-        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC
-                       + get_user_name(message)
-                       + ' : %s'
-                       , message.get('text', ''))
+        logger.warning(Colors.RED + 'Deleted message -> ' + Colors.ENDC + '%s : %s',
+                       get_user_name(message), get_message_or_first_attachment_text(message))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s)->' + Colors.ENDC, error)
       pp.pprint(message)
@@ -179,10 +212,8 @@ def delete_message_on_channel(channel_id, message):
   else:
     counter.increase()
     if not args.quiet:
-      logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC
-                     + get_user_name(message)
-                     + ' :  %s'
-                     , message.get('text', ''))
+      logger.warning(Colors.YELLOW + 'Will delete message -> ' + Colors.ENDC + '%s : %s',
+                     get_user_name(message), get_message_or_first_attachment_text(message))
 
 
 def remove_files(time_range, user_id=None, types=None, channel_id=None):
@@ -212,7 +243,7 @@ def remove_files(time_range, user_id=None, types=None, channel_id=None):
     page = current_page + 1
 
     for f in files:
-      if skip_to_delete(f):
+      if not should_delete_item(f):
         continue
       # Delete user file
       delete_file(f)
@@ -229,8 +260,7 @@ def delete_file(file):
       slack.files.delete(file['id'])
       counter.increase()
       if not args.quiet:
-        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC
-                      + file.get('title', ''))
+        logger.warning(Colors.RED + 'Deleted file -> ' + Colors.ENDC + '%s', file.get('title', ''))
     except Exception as error:
       logger.error(Colors.YELLOW + 'Failed to delete (%s) ->' + Colors.ENDC, error)
       pp.pprint(file)
@@ -241,8 +271,7 @@ def delete_file(file):
   # Just simulate the task
   elif not args.quiet:
     counter.increase()
-    logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC
-                   + file.get('title', ''))
+    logger.warning(Colors.YELLOW + 'Will delete file -> ' + Colors.ENDC + '%s', file.get('title', ''))
 
 
 
@@ -389,28 +418,28 @@ def show_infos():
   """
 
   def print_dict(name, d):
-    m = Colors.GREEN + name + ':' + Colors.ENDC
+    m = u'{g}{name}:{e}'.format(g=Colors.GREEN, name=name, e=Colors.ENDC)
     for k, v in d.items():
-      m += '\n' + k + ' ' + str(v)
+      m += u'\n{k} {v}'.format(k=k, v=v)
     logger.info(m)
 
   res = slack.users.list().body
   if res['ok'] and res['members']:
-    users = { c['id']: c['name'] + ' = ' + c['profile']['real_name'] for c in res['members']}
+    users = {c['id']: u'{n} = {r}'.format(n=c['name'], r=c['profile']['real_name']) for c in res['members']}
   else:
     users = {}
   print_dict('users', users)
 
   res = slack.channels.list().body
   if res['ok'] and res['channels']:
-    channels = { c['id']: c['name'] for c in res['channels']}
+    channels = {c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
   print_dict('public channels', channels)
 
   res = slack.groups.list().body
   if res['ok'] and res['groups']:
-    groups = { c['id']: c['name'] for c in res['groups']}
+    groups = {c['id']: c['name'] for c in res['groups']}
   else:
     groups = {}
   print_dict('private channels', groups)

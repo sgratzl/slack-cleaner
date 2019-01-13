@@ -54,7 +54,7 @@ class Args():
     p.add_argument('--user',
                    help='Delete messages/files from certain user')
     p.add_argument('--botname',
-                   help='Delete messages/files from certain bots')
+                   help='Delete messages/files from certain bots. Implies --bot')
     p.add_argument('--bot', action='store_true',
                    help='Delete messages from bots')
 
@@ -70,7 +70,7 @@ class Args():
     p.add_argument('--types',
                    help='Delete files of a certain type, e.g., posts,pdfs')
     p.add_argument('--pattern',
-                   help='Delete messages with specified pattern (regex)')
+                   help='Delete messages/files with specified pattern or when one of their attachments matches (regex)')
 
     # Our Version
     p.add_argument('--version', action='version', version='Version ' + __version__,
@@ -109,7 +109,7 @@ class Args():
 
     self.user_name = args.user
     self.botname = args.botname
-    self.bot = args.bot
+    self.bot = args.bot or (args.botname is not None) # --botname implies --bot
     self.keep_pinned = args.keeppinned
     self.pattern = args.pattern
     self.start_time = args.after
