@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-
+from slack_cleaner import __version__
 
 class Args():
   def __init__(self):
@@ -25,6 +25,10 @@ class Args():
     # user
     p.add_argument('--as_user', action='store_true',
                    help='Pass true to delete the message as the authed user. Bot users in this context are considered authed users.')
+
+    # proxy
+    p.add_argument('--proxy',
+                   help='Proxy server url:port')
 
     # Type
     g_type = p.add_mutually_exclusive_group()
@@ -68,6 +72,10 @@ class Args():
     p.add_argument('--pattern',
                    help='Delete messages/files with specified pattern or when one of their attachments matches (regex)')
 
+    # Our Version
+    p.add_argument('--version', action='version', version='Version ' + __version__,
+                   help='Print Program Version')
+
     # Perform or not
     p.add_argument('--perform', action='store_true',
                    help='Perform the task')
@@ -87,6 +95,8 @@ class Args():
     self.quiet = args.quiet
     self.rate_limit = args.rate
     self.as_user = args.as_user
+
+    self.proxy = args.proxy
 
     self.delete_message = args.message
     self.delete_file = args.file

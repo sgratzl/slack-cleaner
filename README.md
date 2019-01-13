@@ -34,6 +34,7 @@ optional arguments:
   --token TOKEN        Slack API token (https://api.slack.com/web)
   --log                Create a log file in the current directory
   --quiet              Run quietly, does not log messages deleted
+  --proxy              Proxy Server url:port
   --rate RATE          Delay between API calls (in seconds)
   --as_user            Pass true to delete the message as the authed user. Bot
                        users in this context are considered authed users.
