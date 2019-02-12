@@ -35,6 +35,7 @@ optional arguments:
   --log                Create a log file in the current directory
   --quiet              Run quietly, does not log messages deleted
   --proxy              Proxy Server url:port
+  --verify             Verify option for Session (http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification)
   --rate RATE          Delay between API calls (in seconds)
   --as_user            Pass true to delete the message as the authed user. Bot
                        users in this context are considered authed users.
