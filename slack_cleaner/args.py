@@ -29,6 +29,8 @@ class Args():
     # proxy
     p.add_argument('--proxy',
                    help='Proxy server url:port')
+    p.add_argument('--verify',
+                   help='Verify option for Session (http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification)')
 
     # Type
     g_type = p.add_mutually_exclusive_group()
@@ -97,6 +99,7 @@ class Args():
     self.as_user = args.as_user
 
     self.proxy = args.proxy
+    self.verify = args.verify
 
     self.delete_message = args.message
     self.delete_file = args.file

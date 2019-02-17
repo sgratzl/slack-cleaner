@@ -21,9 +21,18 @@ time_range = TimeRange(args.start_time, args.end_time)
 # Nice slack API wrapper
 with Session() as session:
   if args.proxy:
-    slack = Slacker(args.token, http_proxy=args.proxy, https_proxy=args.proxy, session=session)
-  else:
-    slack = Slacker(args.token, session=session)
+    session.proxies = {
+      'http': args.proxy,
+      'https': args.proxy
+    }
+  if args.verify == 'true':
+    session.verify = True
+  elif args.verify == 'false':
+    session.verify = False
+  elif args.verify:
+    session.verify = args.verify
+
+  slack = Slacker(args.token, session=session)
   if hasattr(slack, 'rate_limit_retries'):
     slack.rate_limit_retries = 2
 
