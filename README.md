@@ -112,9 +112,11 @@ slack-cleaner --help
 
 ## Tokens
 
-You will need to generate a Slack legacy token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
+You will need to generate a Slack legacy *user* token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
 
-[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens)
+[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens). 
+
+The token should start with **xoxp** and not like bot tokens with **xoxb**.
 
 ## Tips
 
