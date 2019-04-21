@@ -21,6 +21,7 @@ docker pull sgratzl/slack-cleaner
 Just use `docker run -it --rm sgratzl/slack-cleaner -c "slack-cleaner ..."` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`.
 
 ## Arguments
+
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
                      [--as_user] [--message | --file | --info] [--regex]
