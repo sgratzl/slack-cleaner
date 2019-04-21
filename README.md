@@ -58,14 +58,70 @@ optional arguments:
   --pattern PATTERN    Delete messages/files with specified pattern or if one of their attachments matches (regex)
   --perform            Perform the task
 ```
+## Slack permission scopes required
 
-## Minimal Slack permission scopes required
+The cleaner needs you to give Slack's API permission to let it run the
+operations it needs. You grant these by registering it as an app in the
+workspace you want to use it in.
+
+### Permission Scopes needed
+
+The permissions to grant depend on what you are going to use the script for.
+Grant the permissions below depending on your use.
+
+Beyond granting permissions, if you wish to use this script to delete
+messages or files posted by others, you will need to be an [Owner or
+Admin](https://get.slack.help/hc/en-us/articles/218124397-Change-a-member-s-role)
+of the workspace.
+
+#### Deleting messages from public channels
 
 - `channels:history`
 - `channels:read`
-- `chat:write:bot`
+- `chat:write:user
 - `users:read`
 
+#### Deleting messages from private channels
+
+- `groups:history`
+- `groups:read`
+- `chat:write:user
+- `users:read`
+
+#### Deleting messages from 1:1 IMs
+
+- `im:history`
+- `im:read`
+- `chat:write:user
+- `users:read`
+
+#### Deleting messages from multi-person IMs
+
+- `mpim:history`
+- `mpim:read`
+- `chat:write:user
+- `users:read`
+
+#### Deleting files
+
+-  files:read
+-  files:write:user
+- `users:read`
+
+### How to grant permissions
+
+You can grant these permissions to the app by:
+
+1. going to [Your Apps](https://api.slack.com/apps)
+2. select 'Create New App', fill out an App Name (eg 'Slack Cleaner') and
+   select the Slack workspace you want to use it in
+3. select 'OAuth & Permissions' in the sidebar
+4. scroll down to Scopes and select all scopes you need
+5. select 'Save changes'
+6. select 'Install App to Workspace'
+7. review the permissions and press 'Authorize'
+8. copy the 'OAuth Access Token' shown, and use this token as the `--token`
+   argument to the script
 
 ## Usage
 
