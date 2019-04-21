@@ -23,7 +23,7 @@ Just use `docker run -it --rm sgratzl/slack-cleaner -c "slack-cleaner ..."` for 
 ## Arguments
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
-                     [--as_user] [--message | --file] [--regex]
+                     [--as_user] [--message | --file | --info] [--regex]
                      [--channel CHANNEL] [--direct DIRECT] [--group GROUP]
                      [--mpdirect MPDIRECT] [--user USER] [--botname BOTNAME]
                      [--bot] [--keeppinned] [--after AFTER] [--before BEFORE]
@@ -34,11 +34,14 @@ optional arguments:
   --token TOKEN        Slack API token (https://api.slack.com/web)
   --log                Create a log file in the current directory
   --quiet              Run quietly, does not log messages deleted
+  --proxy              Proxy Server url:port
+  --verify             Verify option for Session (http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification)
   --rate RATE          Delay between API calls (in seconds)
   --as_user            Pass true to delete the message as the authed user. Bot
                        users in this context are considered authed users.
   --message            Delete messages
   --file               Delete files
+  --info               Show information
   --regex              Interpret channel, direct, group, and mpdirect as regex
   --channel CHANNEL    Channel name's, e.g., general
   --direct DIRECT      Direct message's name, e.g., sherry
@@ -46,15 +49,23 @@ optional arguments:
   --mpdirect MPDIRECT  Multiparty direct message's name, e.g.,
                        sherry,james,johndoe
   --user USER          Delete messages/files from certain user
-  --botname BOTNAME    Delete messages/files from certain bots
+  --botname BOTNAME    Delete messages/files from certain bots. Implies '--bot'
   --bot                Delete messages from bots
   --keeppinned         exclude pinned messages from deletion
   --after AFTER        Delete messages/files newer than this time (YYYYMMDD)
   --before BEFORE      Delete messages/files older than this time (YYYYMMDD)
   --types TYPES        Delete files of a certain type, e.g., posts,pdfs
-  --pattern PATTERN    Delete messages with specified pattern (regex)
+  --pattern PATTERN    Delete messages/files with specified pattern or if one of their attachments matches (regex)
   --perform            Perform the task
 ```
+
+## Minimal Slack permission scopes required
+
+- `channels:history`
+- `channels:read`
+- `chat:write:bot`
+- `users:read`
+
 
 ## Usage
 
@@ -90,17 +101,23 @@ slack-cleaner --token <TOKEN> --file --user johndoe
 # Delete all snippets and images
 slack-cleaner --token <TOKEN> --file --types snippets,images
 
+# Show information about users, channels:
+slack-cleaner --token <TOKEN> --info
+
 # TODO add pattern example, add keep_pinned example, add quiet
 
 # Always have a look at help message
 slack-cleaner --help
+
 ```
 
 ## Tokens
 
-You will need to generate a Slack legacy token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
+You will need to generate a Slack legacy *user* token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
 
-[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens)
+[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens). 
+
+The token should start with **xoxp** and not like bot tokens with **xoxb**.
 
 ## Tips
 

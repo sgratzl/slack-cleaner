@@ -31,6 +31,7 @@ setup(
     install_requires=[
         'setuptools',
         'slacker',
+        'colorama',
         ] + install_requires,
 
     entry_points={

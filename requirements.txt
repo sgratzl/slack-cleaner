@@ -1,1 +1,2 @@
 slacker
+colorama

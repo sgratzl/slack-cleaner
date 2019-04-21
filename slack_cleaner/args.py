@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-
+from slack_cleaner import __version__
 
 class Args():
   def __init__(self):
@@ -26,12 +26,20 @@ class Args():
     p.add_argument('--as_user', action='store_true',
                    help='Pass true to delete the message as the authed user. Bot users in this context are considered authed users.')
 
+    # proxy
+    p.add_argument('--proxy',
+                   help='Proxy server url:port')
+    p.add_argument('--verify',
+                   help='Verify option for Session (http://docs.python-requests.org/en/master/user/advanced/#ssl-cert-verification)')
+
     # Type
     g_type = p.add_mutually_exclusive_group()
     g_type.add_argument('--message', action='store_true',
                         help='Delete messages')
     g_type.add_argument('--file', action='store_true',
                         help='Delete files')
+    g_type.add_argument('--info', action='store_true',
+                        help='Show information')
 
     p.add_argument('--regex', action='store_true', help='Interpret channel, direct, group, and mpdirect as regex')
     p.add_argument('--channel',
@@ -48,7 +56,7 @@ class Args():
     p.add_argument('--user',
                    help='Delete messages/files from certain user')
     p.add_argument('--botname',
-                   help='Delete messages/files from certain bots')
+                   help='Delete messages/files from certain bots. Implies --bot')
     p.add_argument('--bot', action='store_true',
                    help='Delete messages from bots')
 
@@ -64,7 +72,11 @@ class Args():
     p.add_argument('--types',
                    help='Delete files of a certain type, e.g., posts,pdfs')
     p.add_argument('--pattern',
-                   help='Delete messages with specified pattern (regex)')
+                   help='Delete messages/files with specified pattern or when one of their attachments matches (regex)')
+
+    # Our Version
+    p.add_argument('--version', action='version', version='Version ' + __version__,
+                   help='Print Program Version')
 
     # Perform or not
     p.add_argument('--perform', action='store_true',
@@ -79,10 +91,15 @@ class Args():
 
     self.token = args.token
 
+    self.show_infos = args.info
+
     self.log = args.log
     self.quiet = args.quiet
     self.rate_limit = args.rate
     self.as_user = args.as_user
+
+    self.proxy = args.proxy
+    self.verify = args.verify
 
     self.delete_message = args.message
     self.delete_file = args.file
@@ -95,7 +112,7 @@ class Args():
 
     self.user_name = args.user
     self.botname = args.botname
-    self.bot = args.bot
+    self.bot = args.bot or (args.botname is not None) # --botname implies --bot
     self.keep_pinned = args.keeppinned
     self.pattern = args.pattern
     self.start_time = args.after
