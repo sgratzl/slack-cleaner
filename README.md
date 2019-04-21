@@ -58,6 +58,7 @@ optional arguments:
   --pattern PATTERN    Delete messages/files with specified pattern or if one of their attachments matches (regex)
   --perform            Perform the task
 ```
+
 ## Permission Scopes needed
 
 The permissions to grant depend on what you are going to use the script for.
