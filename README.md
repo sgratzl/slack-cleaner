@@ -98,8 +98,8 @@ of the workspace.
 
 #### Deleting files
 
--  files:read
--  files:write:user
+- `files:read`
+- `files:write:user`
 - `users:read`
 
 ## Usage
