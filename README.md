@@ -145,6 +145,7 @@ slack-cleaner --token <TOKEN> --info
 
 # Always have a look at help message
 slack-cleaner --help
+```
 
 ## Configuring app
 
