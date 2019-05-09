@@ -131,20 +131,9 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
   oldest = time_range.start_ts
   latest = time_range.end_ts
 
-  _api_end_point = None
-  # Set to the right API end point
-  if channel_type == 'channel':
-    _api_end_point = slack.channels.history
-  elif channel_type == 'direct':
-    _api_end_point = slack.im.history
-  elif channel_type == 'group':
-    _api_end_point = slack.groups.history
-  elif channel_type == 'mpdirect':
-    _api_end_point = slack.mpim.history
-
   has_more = True
   while has_more:
-    res = _api_end_point(channel_id, latest, oldest).body
+    res = slack.conversations.history(channel_id, latest, oldest).body
     if not res['ok']:
       logger.error('Error occurred on Slack\'s API:')
       pp.pprint(res)
@@ -314,10 +303,10 @@ def get_direct_ids_by_pattern(pattern, equality_match):
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
-  res = slack.groups.list().body
-  if not res['ok'] or not res['groups']:
+  res = slack.conversations.list(types='private_channel').body
+  if not res['ok'] or not res['conversations']:
     return []
-  return match_by_key(pattern, res['groups'], lambda c: c['name'], equality_match)
+  return match_by_key(pattern, res['conversations'], lambda c: c['name'], equality_match)
 
 
 def get_mpdirect_ids_by_pattern(pattern):
@@ -446,9 +435,9 @@ def show_infos():
     channels = {}
   print_dict('public channels', channels)
 
-  res = slack.groups.list().body
-  if res['ok'] and res['groups']:
-    groups = {c['id']: c['name'] for c in res['groups']}
+  res = slack.conversations.list(types='private_channel').body
+  if res['ok'] and res['conversations']:
+    groups = {c['id']: c['name'] for c in res['conversations']}
   else:
     groups = {}
   print_dict('private channels', groups)
