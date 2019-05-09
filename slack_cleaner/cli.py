@@ -133,7 +133,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
 
   has_more = True
   while has_more:
-    res = slack.conversations.history(channel_id, latest, oldest).body
+    res = slack.conversations.history(channel_id, latest=latest, oldest=oldest).body
     if not res['ok']:
       logger.error('Error occurred on Slack\'s API:')
       pp.pprint(res)
@@ -422,28 +422,28 @@ def show_infos():
     logger.info(m)
 
   res = slack.users.list().body
-  if res['ok'] and res['members']:
+  if res['ok'] and res.get('members'):
     users = {c['id']: u'{n} = {r}'.format(n=c['name'], r=c['profile']['real_name']) for c in res['members']}
   else:
     users = {}
   print_dict('users', users)
 
   res = slack.channels.list().body
-  if res['ok'] and res['channels']:
+  if res['ok'] and res.get('channels'):
     channels = {c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
   print_dict('public channels', channels)
 
   res = slack.conversations.list(types='private_channel').body
-  if res['ok'] and res['conversations']:
-    groups = {c['id']: c['name'] for c in res['conversations']}
+  if res['ok'] and res.get('channels'):
+    groups = {c['id']: c['name'] for c in res['channels']}
   else:
     groups = {}
   print_dict('private channels', groups)
 
   res = slack.im.list().body
-  if res['ok'] and res['ims']:
+  if res['ok'] and res.get('ims'):
     ims = { c['id']: user_dict[c['user']] for c in res['ims']}
   else:
     ims = {}
