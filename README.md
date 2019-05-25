@@ -104,7 +104,10 @@ slack-cleaner --token <TOKEN> --file --types snippets,images
 # Show information about users, channels:
 slack-cleaner --token <TOKEN> --info
 
-# TODO add pattern example, add keep_pinned example, add quiet
+# Delete matching a regexp pattern
+slack-cleaner --token <TOKEN> --pattern "(bar|foo.+)"
+
+# TODO add add keep_pinned example, add quiet
 
 # Always have a look at help message
 slack-cleaner --help
