@@ -21,6 +21,7 @@ docker pull sgratzl/slack-cleaner
 Just use `docker run -it --rm sgratzl/slack-cleaner -c "slack-cleaner ..."` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`.
 
 ## Arguments
+
 ```
 usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
                      [--as_user] [--message | --file | --info] [--regex]
@@ -59,13 +60,49 @@ optional arguments:
   --perform            Perform the task
 ```
 
-## Minimal Slack permission scopes required
+## Permission Scopes needed
+
+The permissions to grant depend on what you are going to use the script for.
+Grant the permissions below depending on your use.
+
+Beyond granting permissions, if you wish to use this script to delete
+messages or files posted by others, you will need to be an [Owner or
+Admin](https://get.slack.help/hc/en-us/articles/218124397-Change-a-member-s-role)
+of the workspace.
+
+#### Deleting messages from public channels
 
 - `channels:history`
 - `channels:read`
-- `chat:write:bot`
+- `chat:write:user`
 - `users:read`
 
+#### Deleting messages from private channels
+
+- `groups:history`
+- `groups:read`
+- `chat:write:user`
+- `users:read`
+
+#### Deleting messages from 1:1 IMs
+
+- `im:history`
+- `im:read`
+- `chat:write:user`
+- `users:read`
+
+#### Deleting messages from multi-person IMs
+
+- `mpim:history`
+- `mpim:read`
+- `chat:write:user`
+- `users:read`
+
+#### Deleting files
+
+- `files:read`
+- `files:write:user`
+- `users:read`
 
 ## Usage
 
@@ -111,16 +148,26 @@ slack-cleaner --token <TOKEN> --pattern "(bar|foo.+)"
 
 # Always have a look at help message
 slack-cleaner --help
-
 ```
 
-## Tokens
+## Configuring app
 
-You will need to generate a Slack legacy *user* token to use slack-cleaner. You can generate a token [here](https://api.slack.com/custom-integrations/legacy-tokens):
+The cleaner needs you to give Slack's API permission to let it run the
+operations it needs. You grant these by registering it as an app in the
+workspace you want to use it in.
 
-[https://api.slack.com/custom-integrations/legacy-tokens](https://api.slack.com/custom-integrations/legacy-tokens). 
+You can grant these permissions to the app by:
 
-The token should start with **xoxp** and not like bot tokens with **xoxb**.
+1. going to [Your Apps](https://api.slack.com/apps)
+2. select 'Create New App', fill out an App Name (eg 'Slack Cleaner') and
+   select the Slack workspace you want to use it in
+3. select 'OAuth & Permissions' in the sidebar
+4. scroll down to Scopes and select all scopes you need
+5. select 'Save changes'
+6. select 'Install App to Workspace'
+7. review the permissions and press 'Authorize'
+8. copy the 'OAuth Access Token' shown, and use this token as the `--token`
+   argument to the script
 
 ## Tips
 
