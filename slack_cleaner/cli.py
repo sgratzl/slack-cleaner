@@ -161,12 +161,11 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
           # Delete message if user_name matched or `--user=*`
           if m.get('user') == user_id or user_id == -1:
             delete_message_on_channel(channel_id, m)
-
+        # Thread messages    
         replies = m.get('replies')
         if replies:
           for r in replies:
-            if r.get('user'):
-              if r.get('user') == user_id or user_id == -1:
+            if r.get('user') and (r.get('user') == user_id or user_id == -1):
                 delete_message_on_channel(channel_id, r)
         # Delete bot messages
         if bot and (m.get('subtype') == 'bot_message' or 'bot_id' in m):
