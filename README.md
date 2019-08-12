@@ -20,6 +20,17 @@ docker pull sgratzl/slack-cleaner
 
 Just use `docker run -it --rm sgratzl/slack-cleaner -c "slack-cleaner ..."` for each command or jump into a shell using `docker run -it --rm sgratzl/slack-cleaner`.
 
+Install for Fedora or EPEL7
+
+[@rapgro](https://github.com/rapgro) maintains packages for both Fedora and EPEL7
+
+```bash
+# Fedora
+dnf install slack-cleaner
+# EPEL7
+yum install -y epel-release ; yum install slack-cleaner
+```
+
 ## Arguments
 
 ```
