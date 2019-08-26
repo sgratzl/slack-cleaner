@@ -30,7 +30,7 @@ setup(
 
     install_requires=[
         'setuptools',
-        'slacker',
+        'slacker>=0.13',
         'colorama',
         ] + install_requires,
 
