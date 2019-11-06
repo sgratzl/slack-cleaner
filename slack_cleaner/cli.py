@@ -74,6 +74,14 @@ def init_user_dict():
     user_dict[m['id']] = m['name']
 
 
+def get_user(user_id):
+  if user_id in user_dict:
+    return user_dict[user_id]
+  logger.warning(Colors.YELLOW + 'Cannot find user' + Colors.ENDC + '%s',
+                 user_id)
+  return user_id
+
+
 # Init user dict
 init_user_dict()
 
@@ -161,7 +169,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
           # Delete message if user_name matched or `--user=*`
           if m.get('user') == user_id or user_id == -1:
             delete_message_on_channel(channel_id, m)
-        # Thread messages    
+        # Thread messages
         replies = m.get('replies')
         if replies:
           for r in replies:
@@ -188,7 +196,7 @@ def delete_message_on_channel(channel_id, message):
   def get_user_name(m):
     if m.get('user'):
       _id = m.get('user')
-      return user_dict[_id]
+      return get_user(_id)
     elif m.get('username'):
       return m.get('username')
     else:
@@ -304,7 +312,7 @@ def get_direct_ids_by_pattern(pattern, equality_match):
   if not res['ok'] or not res['ims']:
     return []
   ims = res['ims']
-  return match_by_key(pattern, res['ims'], lambda i: user_dict[i['user']], equality_match)
+  return match_by_key(pattern, res['ims'], lambda i: get_user(i['user']), equality_match)
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
@@ -322,14 +330,14 @@ def get_mpdirect_ids_by_pattern(pattern):
 
   regex = re.compile('^' + pattern + '$', re.I)
   def matches(members):
-    names = [user_dict[m] for m in mpim['members']]
+    names = [get_user(m) for m in mpim['members']]
     # has to match at least one permutation of the members
     for permutation in itertools.permutations(names):
       if (regex.match(','.join(permutation))):
         return True
     return False
 
-  return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
+  return [(mpim['id'], ','.join(get_user(m) for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
 
 
 def get_mpdirect_ids_compatbility(name):
@@ -344,7 +352,7 @@ def get_mpdirect_ids_compatbility(name):
   for mpim in mpims:
     # match the mpdirect user ids
     if set(mpim['members']) == members:
-      return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members']))]
+      return [(mpim['id'], ','.join(get_user(m) for m in mpim['members']))]
   return []
 
 
@@ -449,7 +457,7 @@ def show_infos():
 
   res = slack.im.list().body
   if res['ok'] and res.get('ims'):
-    ims = { c['id']: user_dict[c['user']] for c in res['ims']}
+    ims = { c['id']: get_user(c['user']) for c in res['ims']}
   else:
     ims = {}
   print_dict('instant messages', ims)
