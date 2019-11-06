@@ -3,3 +3,6 @@ dist/
 *.egg-info/
 .idea
 /internal
+.mypy_cache
+.vscode
+Pipfile
