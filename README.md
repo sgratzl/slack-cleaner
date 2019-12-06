@@ -86,6 +86,7 @@ of the workspace.
 - `channels:history`
 - `channels:read`
 - `chat:write:user`
+- `chat:write:bot`
 - `users:read`
 
 #### Deleting messages from private channels
