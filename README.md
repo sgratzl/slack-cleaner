@@ -43,7 +43,7 @@ usage: slack-cleaner [-h] --token TOKEN [--log] [--quiet] [--rate RATE]
 
 optional arguments:
   -h, --help           show this help message and exit
-  --token TOKEN        Slack API token (https://api.slack.com/web)
+  --token TOKEN        Slack API token (https://api.slack.com/web) or SLACK_CLEANER env var
   --log                Create a log file in the current directory
   --quiet              Run quietly, does not log messages deleted
   --proxy              Proxy Server url:port

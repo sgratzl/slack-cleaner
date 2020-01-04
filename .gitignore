@@ -6,3 +6,4 @@ dist/
 .mypy_cache
 .vscode
 Pipfile
+.pytest_cache
