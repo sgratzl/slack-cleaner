@@ -1,5 +1,5 @@
 # slack-cleaner
-[![License: MIT][mit-image]][mit-url] [![Github Actions][github-actions-image]][github-actions-url] [![PyPi][pypi-image]][pypi-url]
+[![License: MIT][mit-image]][mit-url] [![PyPi][pypi-image]][pypi-url]
 
 Bulk delete messages and files on Slack.
 
