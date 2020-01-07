@@ -1,4 +1,5 @@
 # slack-cleaner
+[![License: MIT][mit-image]][mit-url] [![Github Actions][github-actions-image]][github-actions-url] [![PyPi][pypi-image]][pypi-url]
 
 Bulk delete messages and files on Slack.
 
@@ -205,3 +206,9 @@ InsecurePlatformWarning: A true SSLContext object is not available.
 ## Credits
 
 **To all the people who can only afford a free plan. :cry:**
+
+
+[mit-image]: https://img.shields.io/badge/License-MIT-yellow.svg
+[mit-url]: https://opensource.org/licenses/MIT
+[pypi-image]: https://pypip.in/version/slack-cleaner/badge.svg
+[pypi-url]: https://pypi.python.org/pypi/slack-cleaner/
