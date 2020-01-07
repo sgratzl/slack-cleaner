@@ -9,6 +9,12 @@ this is a fork of https://github.com/kfei/slack-cleaner
 Install from Pip:
 
 ```bash
+pip install slack-cleaner
+```
+
+current development version:
+
+```
 pip install -e git+https://github.com/sgratzl/slack-cleaner.git#egg=slack-cleaner
 ```
 
