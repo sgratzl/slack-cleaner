@@ -1,4 +1,4 @@
-dist/
+/dist
 *.pyc
 *.egg-info/
 .idea
@@ -7,3 +7,4 @@ dist/
 .vscode
 Pipfile
 .pytest_cache
+/build
