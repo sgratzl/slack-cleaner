@@ -12,7 +12,7 @@ class Args():
     env_token = os.environ.get('SLACK_TOKEN', None)
     p.add_argument('--token', required=not env_token,
                    default=env_token,
-                   help='Slack API token (https://api.slack.com/web) or SLACK_CLEANER env var')
+                   help='Slack API token (https://api.slack.com/web) or SLACK_TOKEN env var')
 
     # Log
     p.add_argument('--log', action='store_true',
