@@ -330,7 +330,7 @@ def get_mpdirect_ids_by_pattern(pattern):
 
   regex = re.compile('^' + pattern + '$', re.I)
   def matches(members):
-    names = [get_user(m) for m in mpims['members']]
+    names = [get_user(m) for m in members]
     # has to match at least one permutation of the members
     for permutation in itertools.permutations(names):
       if (regex.match(','.join(permutation))):
