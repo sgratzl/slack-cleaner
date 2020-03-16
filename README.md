@@ -92,35 +92,34 @@ of the workspace.
 
 - `channels:history`
 - `channels:read`
-- `chat:write:user`
-- `chat:write:bot`
+- `chat:write` (or both `chat:write:user` and `chat:write:bot` for older apps)
 - `users:read`
 
 #### Deleting messages from private channels
 
 - `groups:history`
 - `groups:read`
-- `chat:write:user`
+- `chat:write` (or `chat:write:user` for older apps)
 - `users:read`
 
 #### Deleting messages from 1:1 IMs
 
 - `im:history`
 - `im:read`
-- `chat:write:user`
+- `chat:write` (or `chat:write:user` for older apps)
 - `users:read`
 
 #### Deleting messages from multi-person IMs
 
 - `mpim:history`
 - `mpim:read`
-- `chat:write:user`
+- `chat:write` (or `chat:write:user` for older apps)
 - `users:read`
 
 #### Deleting files
 
 - `files:read`
-- `files:write:user`
+- `files:write` (or `files:write:user` for older apps)
 - `users:read`
 
 ## Usage
