@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import os
 from slack_cleaner import __version__
 
 class Args():
@@ -8,8 +9,10 @@ class Args():
     p = argparse.ArgumentParser(prog='slack-cleaner')
 
     # Token
-    p.add_argument('--token', required=True,
-                   help='Slack API token (https://api.slack.com/web)')
+    env_token = os.environ.get('SLACK_TOKEN', None)
+    p.add_argument('--token', required=not env_token,
+                   default=env_token,
+                   help='Slack API token (https://api.slack.com/web) or SLACK_TOKEN env var')
 
     # Log
     p.add_argument('--log', action='store_true',

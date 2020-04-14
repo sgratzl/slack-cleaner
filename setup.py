@@ -20,6 +20,7 @@ setup(
     license="MIT",
     keywords="slack, clean, delete, message, file",
     long_description=description,
+    long_description_content_type="text/markdown",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
@@ -30,7 +31,7 @@ setup(
 
     install_requires=[
         'setuptools',
-        'slacker',
+        'slacker>=0.13',
         'colorama',
         ] + install_requires,
 

@@ -1,5 +1,10 @@
-dist/
+/dist
 *.pyc
 *.egg-info/
 .idea
 /internal
+.mypy_cache
+.vscode
+Pipfile
+.pytest_cache
+/build

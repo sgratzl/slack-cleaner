@@ -74,6 +74,14 @@ def init_user_dict():
     user_dict[m['id']] = m['name']
 
 
+def get_user(user_id):
+  if user_id in user_dict:
+    return user_dict[user_id]
+  logger.warning(Colors.YELLOW + 'Cannot find user' + Colors.ENDC + '%s',
+                 user_id)
+  return user_id
+
+
 # Init user dict
 init_user_dict()
 
@@ -131,20 +139,9 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
   oldest = time_range.start_ts
   latest = time_range.end_ts
 
-  _api_end_point = None
-  # Set to the right API end point
-  if channel_type == 'channel':
-    _api_end_point = slack.channels.history
-  elif channel_type == 'direct':
-    _api_end_point = slack.im.history
-  elif channel_type == 'group':
-    _api_end_point = slack.groups.history
-  elif channel_type == 'mpdirect':
-    _api_end_point = slack.mpim.history
-
   has_more = True
   while has_more:
-    res = _api_end_point(channel_id, latest, oldest).body
+    res = slack.conversations.history(channel_id, latest=latest, oldest=oldest).body
     if not res['ok']:
       logger.error('Error occurred on Slack\'s API:')
       pp.pprint(res)
@@ -172,7 +169,12 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
           # Delete message if user_name matched or `--user=*`
           if m.get('user') == user_id or user_id == -1:
             delete_message_on_channel(channel_id, m)
-
+        # Thread messages
+        replies = m.get('replies')
+        if replies:
+          for r in replies:
+            if r.get('user') and (r.get('user') == user_id or user_id == -1):
+                delete_message_on_channel(channel_id, r)
         # Delete bot messages
         if bot and (m.get('subtype') == 'bot_message' or 'bot_id' in m):
           # If botname specified conditionalise the match
@@ -194,7 +196,7 @@ def delete_message_on_channel(channel_id, message):
   def get_user_name(m):
     if m.get('user'):
       _id = m.get('user')
-      return user_dict[_id]
+      return get_user(_id)
     elif m.get('username'):
       return m.get('username')
     else:
@@ -310,14 +312,14 @@ def get_direct_ids_by_pattern(pattern, equality_match):
   if not res['ok'] or not res['ims']:
     return []
   ims = res['ims']
-  return match_by_key(pattern, res['ims'], lambda i: user_dict[i['user']], equality_match)
+  return match_by_key(pattern, res['ims'], lambda i: get_user(i['user']), equality_match)
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
-  res = slack.groups.list().body
-  if not res['ok'] or not res['groups']:
+  res = slack.conversations.list(types='private_channel').body
+  if not res['ok'] or not res['channels']:
     return []
-  return match_by_key(pattern, res['groups'], lambda c: c['name'], equality_match)
+  return match_by_key(pattern, res['channels'], lambda c: c['name'], equality_match)
 
 
 def get_mpdirect_ids_by_pattern(pattern):
@@ -328,14 +330,14 @@ def get_mpdirect_ids_by_pattern(pattern):
 
   regex = re.compile('^' + pattern + '$', re.I)
   def matches(members):
-    names = [user_dict[m] for m in mpim['members']]
+    names = [get_user(m) for m in members]
     # has to match at least one permutation of the members
     for permutation in itertools.permutations(names):
       if (regex.match(','.join(permutation))):
         return True
     return False
 
-  return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
+  return [(mpim['id'], ','.join(get_user(m) for m in mpim['members'])) for mpim in mpims if matches(mpim['members'])]
 
 
 def get_mpdirect_ids_compatbility(name):
@@ -350,7 +352,7 @@ def get_mpdirect_ids_compatbility(name):
   for mpim in mpims:
     # match the mpdirect user ids
     if set(mpim['members']) == members:
-      return [(mpim['id'], ','.join(user_dict[m] for m in mpim['members']))]
+      return [(mpim['id'], ','.join(get_user(m) for m in mpim['members']))]
   return []
 
 
@@ -433,29 +435,29 @@ def show_infos():
     logger.info(m)
 
   res = slack.users.list().body
-  if res['ok'] and res['members']:
+  if res['ok'] and res.get('members'):
     users = {c['id']: u'{n} = {r}'.format(n=c['name'], r=c['profile']['real_name']) for c in res['members']}
   else:
     users = {}
   print_dict('users', users)
 
   res = slack.channels.list().body
-  if res['ok'] and res['channels']:
+  if res['ok'] and res.get('channels'):
     channels = {c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
   print_dict('public channels', channels)
 
-  res = slack.groups.list().body
-  if res['ok'] and res['groups']:
-    groups = {c['id']: c['name'] for c in res['groups']}
+  res = slack.conversations.list(types='private_channel').body
+  if res['ok'] and res.get('channels'):
+    groups = {c['id']: c['name'] for c in res['channels']}
   else:
     groups = {}
   print_dict('private channels', groups)
 
   res = slack.im.list().body
-  if res['ok'] and res['ims']:
-    ims = { c['id']: user_dict[c['user']] for c in res['ims']}
+  if res['ok'] and res.get('ims'):
+    ims = { c['id']: get_user(c['user']) for c in res['ims']}
   else:
     ims = {}
   print_dict('instant messages', ims)
