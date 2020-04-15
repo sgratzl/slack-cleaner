@@ -32,9 +32,7 @@ with Session() as session:
   elif args.verify:
     session.verify = args.verify
 
-  slack = Slacker(args.token, session=session)
-  if hasattr(slack, 'rate_limit_retries'):
-    slack.rate_limit_retries = 2
+  slack = Slacker(args.token, session=session, rate_limit_retries=2)
 
 # So we can print slack's object beautifully
 pp = pprint.PrettyPrinter(indent=4)
