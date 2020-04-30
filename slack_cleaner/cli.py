@@ -131,15 +131,14 @@ def get_message_or_first_attachment_text(message):
 
   return ''
 
-
-def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False):
+def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False, are_replies=False):
   # Setup time range for query
   oldest = time_range.start_ts
   latest = time_range.end_ts
 
   has_more = True
   while has_more:
-    res = slack.conversations.history(channel_id, latest=latest, oldest=oldest).body
+    res = list_f(latest, oldest).body
     if not res['ok']:
       logger.error('Error occurred on Slack\'s API:')
       pp.pprint(res)
@@ -149,7 +148,7 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
     has_more = res['has_more']
 
     if not messages:
-      if not args.quiet:
+      if not args.quiet and not are_replies:
         logger.info('No more messsages')
       break
 
@@ -173,13 +172,18 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
           for r in replies:
             if r.get('user') and (r.get('user') == user_id or user_id == -1):
                 delete_message_on_channel(channel_id, r)
+        elif m.get('reply_count', 0) > 0 and not are_replies:
+          clean_replies(channel_id, m.get('thread_ts', m['ts']), time_range, user_id, bot)
+
         # Delete bot messages
         if bot and (m.get('subtype') == 'bot_message' or 'bot_id' in m):
           # If botname specified conditionalise the match
           if args.botname:
             if m.get('username') != user_id:
               continue
-          delete_message_on_channel(channel_id, m)
+          if m.get('subtype') != 'tombstone':
+            # cannot delete tombstone messages
+            delete_message_on_channel(channel_id, m)
 
       # Exceptions
       else:
@@ -188,6 +192,20 @@ def clean_channel(channel_id, channel_type, time_range, user_id=None, bot=False)
 
     if args.rate_limit:
       time.sleep(args.rate_limit)
+
+
+def clean_replies(channel_id, thread_ts, time_range, user_id=None, bot=False):
+  def list_f(latest, oldest):
+    return slack.conversations.replies(channel_id, thread_ts, latest=latest, oldest=oldest, limit=1000)
+
+  _clean_messages_impl(list_f, channel_id, time_range, user_id, bot, True)
+
+
+def clean_channel(channel_id, time_range, user_id=None, bot=False):
+  def list_f(latest, oldest):
+    return slack.conversations.history(channel_id, latest=latest, oldest=oldest, limit=1000)
+
+  _clean_messages_impl(list_f, channel_id, time_range, user_id, bot)
 
 
 def delete_message_on_channel(channel_id, message):
@@ -403,7 +421,7 @@ def message_cleaner():
   for (channel_id, channel_name, channel_type) in _channels:
     logger.info('Deleting messages from %s %s', channel_type, channel_name)
     # Delete messages on certain channel
-    clean_channel(channel_id, channel_type, time_range, user_id=_user_id, bot=args.bot)
+    clean_channel(channel_id, time_range, user_id=_user_id, bot=args.bot)
 
 
 def file_cleaner():
