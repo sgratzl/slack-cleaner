@@ -16,7 +16,7 @@ setup(
     author=metadata['author'],
     author_email=metadata['authoremail'],
     version=metadata['version'],
-    url='https://github.com/kfei/slack-cleaner',
+    url='https://github.com/sgratzl/slack-cleaner',
     license="MIT",
     keywords="slack, clean, delete, message, file",
     long_description=description,
