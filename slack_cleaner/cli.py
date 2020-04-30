@@ -131,7 +131,7 @@ def get_message_or_first_attachment_text(message):
 
   return ''
 
-def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False, are_replies=False):
+def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False, are_replies_of=None):
   # Setup time range for query
   oldest = time_range.start_ts
   latest = time_range.end_ts
@@ -148,13 +148,16 @@ def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False
     has_more = res['has_more']
 
     if not messages:
-      if not args.quiet and not are_replies:
+      if not args.quiet and not are_replies_of:
         logger.info('No more messsages')
       break
 
     for m in messages:
       # Prepare for next page query
       latest = m['ts']
+
+      if are_replies_of and m['ts'] == are_replies_of:
+        continue
 
       # Delete user messages
       if m['type'] == 'message':
@@ -172,7 +175,7 @@ def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False
           for r in replies:
             if r.get('user') and (r.get('user') == user_id or user_id == -1):
                 delete_message_on_channel(channel_id, r)
-        elif m.get('reply_count', 0) > 0 and not are_replies:
+        elif m.get('reply_count', 0) > 0 and not are_replies_of:
           clean_replies(channel_id, m.get('thread_ts', m['ts']), time_range, user_id, bot)
 
         # Delete bot messages
@@ -198,7 +201,7 @@ def clean_replies(channel_id, thread_ts, time_range, user_id=None, bot=False):
   def list_f(latest, oldest):
     return slack.conversations.replies(channel_id, thread_ts, latest=latest, oldest=oldest, limit=1000)
 
-  _clean_messages_impl(list_f, channel_id, time_range, user_id, bot, True)
+  _clean_messages_impl(list_f, channel_id, time_range, user_id, bot, thread_ts)
 
 
 def clean_channel(channel_id, time_range, user_id=None, bot=False):
