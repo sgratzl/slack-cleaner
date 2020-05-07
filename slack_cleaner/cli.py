@@ -376,7 +376,7 @@ def get_mpdirect_ids_compatbility(name):
   members = set([get_user_id_by_name(x) for x in name.split(',')])
 
   for mpim in mpims:
-    members_res = slack.conversations.members(id).body
+    members_res = slack.conversations.members(mpim['id']).body
     if not members_res['ok']:
       continue
     mpim_members = members_res['members']
