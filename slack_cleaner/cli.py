@@ -330,8 +330,7 @@ def get_direct_ids_by_pattern(pattern, equality_match):
   res = slack.conversations.list(types='im').body
   if not res['ok'] or not res['channels']:
     return []
-  ims = res['ims']
-  return match_by_key(pattern, res['ims'], lambda i: get_user(i['user']), equality_match)
+  return match_by_key(pattern, res['channels'], lambda i: get_user(i['user']), equality_match)
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
