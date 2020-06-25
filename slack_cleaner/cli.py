@@ -8,7 +8,7 @@ import time
 import re
 import itertools
 from requests.sessions import Session
-from slacker import Slacker
+from slacker import Slacker, Error
 
 from slack_cleaner import __version__
 from slack_cleaner.utils import Colors, Counter, TimeRange
@@ -145,12 +145,13 @@ def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False
       sys.exit(1)
 
     messages = res['messages']
-    has_more = res['has_more']
 
     if not messages:
       if not args.quiet and not are_replies_of:
         logger.info('No more messsages')
       break
+
+    has_more = res['has_more']
 
     for m in messages:
       # Prepare for next page query
@@ -199,7 +200,14 @@ def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False
 
 def clean_replies(channel_id, thread_ts, time_range, user_id=None, bot=False):
   def list_f(latest, oldest):
-    return slack.conversations.replies(channel_id, thread_ts, latest=latest, oldest=oldest, limit=1000)
+    try:
+      return slack.conversations.replies(channel_id, thread_ts, latest=latest, oldest=oldest, limit=1000)
+    except Error as e:
+      if str(e) == 'thread_not_found':
+        # make it as if there are no more messages
+        return dict(ok=True, messages=[])
+      raise e
+    
 
   _clean_messages_impl(list_f, channel_id, time_range, user_id, bot, thread_ts)
 
