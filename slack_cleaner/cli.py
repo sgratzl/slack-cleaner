@@ -328,28 +328,28 @@ def match_by_key(pattern, items, key, equality_match):
 
 
 def get_channel_ids_by_pattern(pattern, equality_match):
-  res = slack.conversations.list(types='public_channel').body
+  res = slack.conversations.list(types='public_channel', limit=1000).body
   if not res['ok'] or not res['channels']:
     return []
   return match_by_key(pattern, res['channels'], lambda c: c['name'], equality_match)
 
 
 def get_direct_ids_by_pattern(pattern, equality_match):
-  res = slack.conversations.list(types='im').body
+  res = slack.conversations.list(types='im', limit=1000).body
   if not res['ok'] or not res['channels']:
     return []
   return match_by_key(pattern, res['channels'], lambda i: get_user(i['user']), equality_match)
 
 
 def get_group_ids_by_pattern(pattern, equality_match):
-  res = slack.conversations.list(types='private_channel').body
+  res = slack.conversations.list(types='private_channel', limit=1000).body
   if not res['ok'] or not res['channels']:
     return []
   return match_by_key(pattern, res['channels'], lambda c: c['name'], equality_match)
 
 
 def get_mpdirect_ids_by_pattern(pattern):
-  res = slack.conversations.list(types='mpim').body
+  res = slack.conversations.list(types='mpim', limit=1000).body
   if not res['ok'] or not res['channels']:
     return []
   mpims = res['channels']
@@ -374,7 +374,7 @@ def get_mpdirect_ids_by_pattern(pattern):
 
 
 def get_mpdirect_ids_compatbility(name):
-  res = slack.conversations.list(types='mpim').body
+  res = slack.conversations.list(types='mpim', limit=1000).body
   if not res['ok'] or not res['channels']:
     return []
   mpims = res['channels']
@@ -478,28 +478,28 @@ def show_infos():
     users = {}
   print_dict('users', users)
 
-  res = slack.conversations.list(types='public_channel').body
+  res = slack.conversations.list(types='public_channel', limit=1000).body
   if res['ok'] and res.get('channels'):
     channels = {c['id']: c['name'] for c in res['channels']}
   else:
     channels = {}
   print_dict('public channels', channels)
 
-  res = slack.conversations.list(types='private_channel').body
+  res = slack.conversations.list(types='private_channel', limit=1000).body
   if res['ok'] and res.get('channels'):
     groups = {c['id']: c['name'] for c in res['channels']}
   else:
     groups = {}
   print_dict('private channels', groups)
 
-  res = slack.conversations.list(types='im').body
+  res = slack.conversations.list(types='im', limit=1000).body
   if res['ok'] and res.get('channels'):
     ims = { c['id']: get_user(c['user']) for c in res['channels']}
   else:
     ims = {}
   print_dict('instant messages', ims)
 
-  res = slack.conversations.list(types='mpim').body
+  res = slack.conversations.list(types='mpim', limit=1000).body
   if res['ok'] and res['channels']:
     mpin = { c['id']: c['name'] for c in res['channels']}
   else:
