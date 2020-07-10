@@ -5,6 +5,8 @@ Bulk delete messages and files on Slack.
 
 this is a fork of https://github.com/kfei/slack-cleaner
 
+An improved Python module based version is located at https://github.com/sgratzl/slack_cleaner2
+
 ## Install
 
 Install from Pip:
