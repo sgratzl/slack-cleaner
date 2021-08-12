@@ -148,7 +148,7 @@ def _clean_messages_impl(list_f, channel_id, time_range, user_id=None, bot=False
 
     if not messages:
       if not args.quiet and not are_replies_of:
-        logger.info('No more messsages')
+        logger.info('No more messages')
       break
 
     has_more = res['has_more']
@@ -207,7 +207,6 @@ def clean_replies(channel_id, thread_ts, time_range, user_id=None, bot=False):
         # make it as if there are no more messages
         return dict(ok=True, messages=[])
       raise e
-    
 
   _clean_messages_impl(list_f, channel_id, time_range, user_id, bot, thread_ts)
 
@@ -366,7 +365,7 @@ def get_mpdirect_ids_by_pattern(pattern):
     names = [get_user(m) for m in members]
     # has to match at least one permutation of the members
     for permutation in itertools.permutations(names):
-      if (regex.match(','.join(permutation))):
+      if regex.match(','.join(permutation)):
         return True
     return False
 
